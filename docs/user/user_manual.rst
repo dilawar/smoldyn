@@ -120,7 +120,7 @@ Macintosh
    Type ``echo $PATH`` to get a list of colon-separated places where the
    computer looks. If ``/usr/local/bin`` isn't in this list, then you need to
    add it to your profile file ([Google `edit path
-   mac`](https://www.google.com/search?client=firefox-b"d&q=edit+path+mac))
+   mac`](https://www.google.com/search?client=firefox-b-d&q=edit+path+mac))
 
    **Is your system allowing you to run the code?**
    If you're told that permission was denied for running smoldyn, then your
@@ -167,7 +167,8 @@ Windows
 6. Exit the command prompt as administrator, and start a new command
    prompt, not as administrator.
 
-7. Test Smoldyn by typing ``smoldyn examples/S1\_intro/bounce3.txt``.
+7. Test Smoldyn by typing ``smoldyn examples/S1_intro/bounce3.txt`` (``python3
+   examples/S1_intro/bounce3.py``).
 
 **If you don’t have administrator privileges**
 
@@ -250,7 +251,7 @@ Compiling on Macintosh
    configure with: 
 
    ```
-   $ LIBTIFF_CFLAGS=""I/sw/local/include" LIBTIFF_LDFLAGS=""L/sw/local/lib "ltiff" ./configure
+   $ LIBTIFF_CFLAGS="-I/sw/local/include" LIBTIFF_LDFLAGS=n-L/sw/local/lib -ltiff" ./configure
    ```
 
 5. Install Smoldyn by changing to the ``cmake`` directory. Then type ``cmake
@@ -261,21 +262,21 @@ Compiling on Macintosh
    the Smoldyn programmers manual. To clean up temporary files, *which is
    essential if you want to try building a second time*, first enter ``pwd``
    and confirm that you are still in the ``cmake/`` directory (don’t continue
-   if not!). Then, type ``rm "r \*`` to clear out all prior build stuff.
+   if not!). Then, type ``rm -rf *`` to clear out all prior build stuff.
 
 Test Smoldyn
 ------------
 
 -  Type ``smoldyn -V`` to just print out the Smoldyn version number.  If it
    doesn’t work, then the most likely problem is that your system is not set up
-   to run programs that are in your /usr/local/bin directory, which is where
-   Smoldyn is installed by default. To fix this temporarily, type ``export
-   PATH=$PATH:/usr/local/bin``; to fix it permanently, although it will only
-   take effect after you open a new terminal window, use emacs or some other
-   editor to edit the file ``~/.profile`` and add the line ``export
+   to run programs that are in your ``/usr/local/bin`` directory, which is
+   where Smoldyn is installed by default. To fix this temporarily, type
+   ``export PATH=$PATH:/usr/local/bin``; to fix it permanently, although it
+   will only take effect after you open a new terminal window, use emacs or
+   some other editor to edit the file ``~/.profile`` and add the line ``export
    PATH=$PATH:/usr/local/bin``.
 
--  Type ``smoldyn examples/S8\_reactions/lotvolt/lotvolt.txt`` to run a
+-  Type ``smoldyn examples/S8_reactions/lotvolt/lotvolt.txt`` to run a
    Lotka-Volterra simulation. If a graphics window doesn’t appear, then the
    OpenGL linking somehow failed. Otherwise, press ‘T’ (upper-case) at some
    point during the simulation to save a tiff-format image of the graphical
@@ -328,39 +329,37 @@ For the most part, installing on a UNIX or Linux system is the same as
 for Macintosh, described above. Following are a few Linux-specific
 notes.
 
-To download Smoldyn from a command line, type
-``wget http://www.smoldyn.org/smoldyn-2.xx.tar.gz``, where the ``xx`` is
-the current version number. Then unpack it with
-``tar xzvf smoldyn-2.xx.tar.gz``.
+To download Smoldyn from a command line, type ``wget
+http://www.smoldyn.org/smoldyn-2.xx.tar.gz``, where the ``xx`` is the current
+version number. Then unpack it with ``tar xzvf smoldyn-2.xx.tar.gz``.
 
-For a full installation, you will need OpenGL and Libtiff. I don’t know
-how to install them for all systems, but it turned out to be easy for my
-Fedora release 7. I already had OpenGL, but not the OpenGL glut library
-nor Libtiff. To install them, I entered
-``sudo yum install freeglut-devel`` and ``sudo yum install libtiff``,
-respectively, along with my password.
+For a full installation, you will need OpenGL and Libtiff. I don’t know how to
+install them for all systems, but it turned out to be easy for my Fedora
+release 7. I already had OpenGL, but not the OpenGL glut library nor Libtiff.
+To install them, I entered ``sudo yum install freeglut-devel`` and ``sudo yum
+install libtiff``, respectively, along with my password.
 
-Ubuntu systems are slightly more finicky than others. First, you may
-need to install several things as follows. Install a C++ compiler with
-``sudo apt-get install g++``, install a Python header file with
-``sudo apt-get install python-dev``, install the OpenGL glut library
-with ``sudo apt-get install freeglut3-dev``, and install the libtiff
-library with ``sudo apt-get install libtiff4-dev``.
+Ubuntu systems are slightly more finicky than others. First, you may need to
+install several things as follows. Install a C++ compiler with ``sudo apt-get
+install g++``, install a Python header file with ``sudo apt-get install
+python-dev``, install the OpenGL glut library with ``sudo apt-get install
+freeglut3-dev``, and install the libtiff library with ``sudo apt-get install
+libtiff4-dev``.
 
 Running Smoldyn remotely
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-It can be helpful to have Smoldyn installed on computer A and run from
-computer B. Running Smoldyn without graphics is trivial. Just ssh into
-computer A as normal, and run Smoldyn with ``smoldyn filename.txt "t``,
-where the "t flag implies text-only operation. If you want graphics
-though, then log in with ``ssh "Y me@compA/directory`` and run Smoldyn
-as normal. Graphics will be slow but should be functional.
+It can be helpful to have Smoldyn installed on computer A and run from computer
+B. Running Smoldyn without graphics is trivial. Just ssh into computer A as
+normal, and run Smoldyn with ``smoldyn filename.txt -t``, where the -t flag
+implies text-only operation. If you want graphics though, then log in with
+``ssh -Y me@compA/directory`` and run Smoldyn as normal. Graphics will be slow
+but should be functional.
 
-Alternatively, I’ve found the free software TeamViewer to be a
-convenient method for working on computers remotely. An advantage of
-this method is that it works even if there are institutional firewalls
-that prohibit remote computer access.
+Alternatively, I’ve found the free software TeamViewer to be a convenient
+method for working on computers remotely. An advantage of this method is that
+it works even if there are institutional firewalls that prohibit remote
+computer access.
 
 Building on Linux
 ^^^^^^^^^^^^^^^^^
@@ -428,13 +427,19 @@ shift"‘Q’ to quit the simulation.
 Smoldyn input file format
 -------------------------
 
-
 Here is the complete Smoldyn input file for the template.txt simulation.
 This file includes most of Smoldyn’s core features.
 
 .. literalinclude:: /../examples/template.txt
    :language: bash
    :linenos:
+
+Same model is written in Python.
+
+.. literalinclude:: /../examples/template.py
+   :language: python
+   :linenos:
+
 
 Comments
 --------
@@ -540,8 +545,8 @@ Graphical output
 
 Graphical output can be displayed with several levels of quality. At the
 bottom end is no output at all, achieved with the ``graphics none``
-statement or by using a ``"t`` flag on the command line
-(e.g. ``$ smoldyn template.txt "t``). Next the ``graphics opengl`` level
+statement or by using a ``-t`` flag on the command line
+(e.g. ``$ smoldyn template.txt -t``). Next the ``graphics opengl`` level
 produces crude graphics, ``graphics opengl_good`` is passable, and
 ``opengl_better`` is reasonably good. Improving the graphics quality
 slows simulations down, so a good approach is to use the plain
@@ -559,7 +564,7 @@ Space and time
 Smoldyn can run simulations in 1, 2, or 3 dimensions. Here, the
 ``dim 2`` statement says that this is a 2D simulation. The following two
 ``boundaries`` statements define the system volume, showing that it
-extends from "1 to 1 on the x axis, and then the same on the y axis.
+extends from -1 to 1 on the x axis, and then the same on the y axis.
 Smoldyn still tracks any molecules beyond these boundaries but it
 becomes less efficient if there are substantial dynamics there.
 
@@ -771,8 +776,8 @@ If commands are used to output text to files, then Smoldyn needs to know
 what those files are beforehand, which is the purpose of the
 ``output_files`` statement. If those files already exist, then Smoldyn
 checks with the user first before overwriting them. To suppress this
-warning, run Smoldyn with a ``"w`` option on the command line (e.g.
-``smoldyn template.txt "w``).
+warning, run Smoldyn with a ``-w`` option on the command line (e.g.
+``smoldyn template.txt -w``).
 
 Each command is entered with the same general format. They start with
 ``cmd``, list the times when the command should be executed, give the
@@ -954,7 +959,7 @@ files, as well as files that may not be compatible with future Smoldyn
 releases.
 
 Text substitution can also be directed from the command line. If you
-include the command line option ``""define``, followed by text of the
+include the command line option ``--define``, followed by text of the
 form ``key=replacement`` (do not include spaces, although if you want
 spaces within the replacement text, then enclose it in double quotes),
 this is equivalent to declaring text substitution using the
@@ -992,7 +997,7 @@ standard output and also saved to different files.
    simnum=0
    for rxnrate in [0.01,0.02,0.05,0.1,0.2,0.5,1]:
        simnum+=1
-       string='smoldyn paramscan.txt ""define RXNRATE=%f ""define SIMNUM=%i "tqw' %(rxnrate,simnum)
+       string='smoldyn paramscan.txt --define RXNRATE=%f --define SIMNUM=%i -tqw' %(rxnrate,simnum)
        print(string)
        os.system(string)
 
@@ -1366,8 +1371,8 @@ diffusion equation. The example file ``diffa.txt`` illustrates the use of the
    difm green 1 2 3 2 0 4 3 4 1
 
 The former line leads to anisotropic diffusion of red molecules with a
-diffusion coefficient of 1 on the *x*"axis, 0 on the *y*"axis, and 4 on
-the *z*"axis. The latter leads to anisotropic diffusion with
+diffusion coefficient of 1 on the *x*-axis, 0 on the *y*-axis, and 4 on
+the *z*-axis. The latter leads to anisotropic diffusion with
 off-diagonal components. This matrix is interpreted to be
 
 .. math::
@@ -1382,10 +1387,10 @@ Results are shown below
 |image4| |image5| |image6|
 
 In the figure, it can be seen that the red molecules diffuse only on the
-*x*"*z*"plane, whereas the green molecules diffuse into an elliptical
+*x*-*z*-plane, whereas the green molecules diffuse into an elliptical
 pattern that is not aligned with the axes. The red molecule data are
-graphed, where it is shown that *x*"values diffuse slowly, *y*"values
-don’t diffuse at all, and *z*"values diffuse rapidly. The means and
+graphed, where it is shown that *x*-values diffuse slowly, *y*-values
+don’t diffuse at all, and *z*-values diffuse rapidly. The means and
 variances agree well with theory.
 
 Drift
@@ -2568,21 +2573,20 @@ simplifies to
 
 .. math:: C(r) = \sum_i\frac{q_i}{4π D$r-r_i|}
 
-The figure below shows results from the emitter1.txt Smoldyn simulation,
-in which an emitter at location **r**\ 1 = ("4.5,0,0) micron emits
-*q*\ 1 = 500 molecules per second, these molecules have a diffusion
-coefficient of *D* = 3 μm2/s, and the system is surrounded by a
-triangulated sphere that is centered at the origin and has radius 10
-microns. Absorption to this sphere was set to make the molecules diffuse
-as though the system were unbounded. Close agreement between simulation
-and theory show that the algorithm works well.
+The figure below shows results from the emitter1.txt Smoldyn simulation, in
+which an emitter at location **r**\ 1 = (-4.5,0,0) micron emits *q*\ 1 = 500
+molecules per second, these molecules have a diffusion coefficient of *D* = 3
+μm:sup:`2` /s, and the system is surrounded by a triangulated sphere that is
+centered at the origin and has radius 10 microns. Absorption to this sphere was
+set to make the molecules diffuse as though the system were unbounded. Close
+agreement between simulation and theory show that the algorithm works well.
 
 |image12| |image13|
 
 The left panel shows a snapshot from example emitter1.txt where it is
 seen that the emitter center is somewhat left of the sphere center and
 the sphere is triangulated. The right panel shows line profiles across
-the middle of the sphere, from ("10,0,0) to (10,0,0) at times *t* = 0.3
+the middle of the sphere, from (-10,0,0) to (10,0,0) at times *t* = 0.3
 s (blue) and *t* = 100 s (red), with simulation data shown with points
 and theoretical results, from the equations above, in solid lines.
 
@@ -2948,7 +2952,7 @@ Bimolecular reactions have the generic reaction equation A + B → C, for
 which the mass action kinetics are described by the deterministic
 differential equations
 
-.. math:: \frac{d[A]}{dt}=\frac{d[B]}{dt}="\frac{d[C]}{dt}="k[A][B]
+.. math:: \frac{d[A]}{dt}=\frac{d[B]}{dt}="\frac{d[C]}{dt}=-k[A][B]
 
 The reaction rate constant, *k*, is only actually constant if: (*i*) the
 reaction kinetics are purely activation-limited, or (*ii*) the reaction
@@ -2960,7 +2964,7 @@ the condition that there are the same numbers of A and B molecules
 initially, the solution for the number of A molecules (or B molecules)
 as a function of time is
 
-.. math:: n(t)=\left( \frac{1}{n(0)}+\frac{kt}{V}\right)"{"1}
+.. math:: n(t)=\left( \frac{1}{n(0)}+\frac{kt}{V}\right)"{-1}
 
 As before, *n*\ (0) is the initial number of A or B molecules,
 *n*\ (*t*) is the number of A or B molecules as a function of time, *k*
@@ -3025,7 +3029,7 @@ collisions, Smoldyn uses a larger binding radius for the former.
 The analytical solution for the number of A molecules as a function of
 time is also slightly different from before,
 
-.. math:: n(t)=\left( \frac{1}{n(0)}+\frac{2kt}{V}\right)"{"1}
+.. math:: n(t)=\left( \frac{1}{n(0)}+\frac{2kt}{V}\right)"{-1}
 
 The reaction description portion of the configuration file
 S8_reactions/bireactAA.txt is
@@ -3088,7 +3092,7 @@ forward to reverse rate constants,
 molecules. Using the above equation and this starting point, the
 solution for the equilibrium number of A molecules is
 
-.. math:: n_A = \frac{"V+ \sqrt{V-2+4Kn_A(0)V}}{2K}
+.. math:: n_A = \frac{-V+ \sqrt{V-2+4Kn_A(0)V}}{2K}
 
 :math:`n_A(0)` is the initial number of A molecules. It was verified
 that the simulation result approached this value.
@@ -3112,23 +3116,23 @@ explicitly define each of the steps.
 Taking the Michaelis-Menten reaction as an example, consider substrate
 S, enzyme E, and product P. The full reaction system is
 
-.. math::  E+S\xrightleftharpoons[k_{"1}]{k_1} ES \xrightarrow{k_2} P
+.. math::  E+S\xrightleftharpoons[k_{-1}]{k_1} ES \xrightarrow{k_2} P
 
 All three of these reactions, along with the enzyme-substrate complex
 ES, need to be defined in a Smoldyn file. Of course, this means that you
-also need to give the three reaction rate constants *k*\ 1, *k*\ "1, and
+also need to give the three reaction rate constants *k*\ 1, *k*\ -1, and
 *k*\ 2. Assume you know the Michaelis constant *KM* and the maximum
 reaction velocity *Vmax*. As can be found in any biochemistry textbook,
 these are connected to the underlying rate constants as
 
-.. math:: K_M=\frac{k_{"1}+k_2}{k_1}, \quad V_{max}=k_2[E]_0
+.. math:: K_M=\frac{k_{-1}+k_2}{k_1}, \quad V_{max}=k_2[E]_0
 
 where [E]0 is the total enzyme concentration. These two equations are
 not sufficient to solve for the three rate constants, so let us define
 the unitless reaction efficiency ratio, *r*, as the fraction of ES that
 goes to P,
 
-.. math:: r=\frac{k_2}{k_{"1}+k_2}
+.. math:: r=\frac{k_2}{k_{-1}+k_2}
 
 This value can range between 0 and 1, where small values represent rapid
 equilibration between E, S, and ES, and high values represent rapid
@@ -3136,7 +3140,7 @@ reaction of ES to P. Typical Michaelis-Menten analyses assume the former
 situation, so we might guess that *r* is 0.1. Solving these equations
 for the reaction rate constant yield:
 
-.. math:: k_1=\frac{V_{max}}{[E]_0K_Mr}, \quad k_{"1}=\frac{V_{max}(1-r)}{[E]_0r}, \quad k_2=\frac{V_{max}}{[E]_0}
+.. math:: k_1=\frac{V_{max}}{[E]_0K_Mr}, \quad k_{n1}=\frac{V_{max}(1-r)}{[E]_0r}, \quad k_2=\frac{V_{max}}{[E]_0}
 
 Other multi-step reactions can be broken down to elementary reactions in
 a similar manner. The need to include additional assumptions, as we did
@@ -3176,9 +3180,9 @@ S8_reactions/lotvolt/lotvolt.txt is:
    time_start 0
    time_stop 100
    time_step 0.001
-   boundaries x "100 100 p
-   boundaries y "100 100 p
-   boundaries z "10 10 p
+   boundaries x -100 100 p
+   boundaries y -100 100 p
+   boundaries z -10 10 p
    mol 1000 rabbit u u u
    mol 1000 fox u u u
    cmd b pause
@@ -3330,11 +3334,11 @@ maintain their serial numbers. There are several options for the
 product_placement parameter value. Setting it to a positive value (which
 should be larger than the binding radius) causes the two products to be
 placed at this distance apart, along the same vector as the molecules
-were on before they were moved apart. Setting it to "1 is generally more
+were on before they were moved apart. Setting it to -1 is generally more
 accurate; here, the products are separated by the binding radius plus
 the distance that the reactants had been inside of the binding radius.
 This separation is along the vector that separated the reactants.
-Setting it to "2, or leaving the value blank because this is the default
+Setting it to -2, or leaving the value blank because this is the default
 method, is better yet. Here, the molecules bounce ballistically off of
 each other. This is the most accurate method. In all cases, the reaction
 rate value is largely meaningless for excluded volume reactions.
@@ -3357,7 +3361,7 @@ are:
 
    reaction rxn1 red(up) + green(up) -> red(up) + green(up)
    binding_radius rxn1 1
-   product_placement rxn1 bounce "2
+   product_placement rxn1 bounce -2
 
 A second example involves a crowded system and is in the same directory
 and the file crowding.txt.
@@ -4076,7 +4080,7 @@ structure of the complete complex (A-B-B-A).
 ::
 
    # BioNetGen file, run in Smoldyn with abbasim.txt
-   setOption("SpeciesLabel-,-HNauty")
+   setOption(-SpeciesLabel-,-HNauty")
    begin model
    begin parameters
        Anumber 100
@@ -4304,7 +4308,7 @@ files.
 ::
 
    \# BioNetGen file, run in Smoldyn with surfacestatessim.txt
-   setOption("SpeciesLabel","HNauty")
+   setOption(-SpeciesLabel",-HNauty")
    begin model
 
    begin parameters
@@ -4397,9 +4401,9 @@ files.
    start_surface outsides
        action both all(all) reflect
        panel rect +x 0 0 100
-       panel rect "x 100 0 100
+       panel rect -x 100 0 100
        panel rect +y 0 0 100
-       panel rect "y 0 100 100
+       panel rect -y 0 100 100
    end_surface
 
    # initial molecules
@@ -4548,7 +4552,7 @@ where :math:`D_i` is the diffusion coefficient of the i’th monomer.
 Smoldyn computes colors for species by computing the arithmetic average
 of the red, green, and blue color values for each of the monomers.
 
-.. math:: D_{species}=\left(\sum_i D_i"{"3} \right)"{"1/3}
+.. math:: D_{species}=\left(\sum_i D_i"{-3} \right)"{-1/3}
 
 Surface-molecule interactions
 -------------------------------
@@ -5176,7 +5180,7 @@ applied to all species that match the given species pattern.
 
 Drift velocity vector for molecules of type *species* and state *state*,
 relative to the local coordinates of the panel to which these molecules
-are bound. The vector has *dim*"1 terms (*dim* is the system
+are bound. The vector has *dim*-1 terms (*dim* is the system
 dimensionality), which are for the natural coordinate system of the
 local panel. *species* and or *state* may be ``all`` to set drift
 vectors for multiple species and surface-bound states at once. If the
@@ -5728,9 +5732,9 @@ the rectangle in sequential order of the axes, omitting the one that it
 is perpendicular to. These dimensions are better called displacements
 because they are added to the corner that is entered, so they may be
 positive or negative. For example, for a square in a 3-D system that is
-perpendicular to the *y*"axis, has sides of length 10 and is centered
-about the origin, enter: ``panel rect +1 "5 0 "5 10 10``. This same
-square could be entered as ``panel rect +1 5 0 5 "10 "10`` , or with
+perpendicular to the *y*-axis, has sides of length 10 and is centered
+about the origin, enter: ``panel rect +1 -5 0 -5 10 10``. This same
+square could be entered as ``panel rect +1 5 0 5 -10 -10`` , or with
 other descriptions. A rectangle is always perpendicular to an axis.
 
 For ``tri``, enter the coordinates of the corners of the triangle. This
@@ -5815,7 +5819,7 @@ using *surface*:*panel*.
 
 ::
 
-   \* unbounded_emitter *face species amount pos<sub>0</sub> pos<sub>1</sub> … pos<sub>dim</sub>*<sub>"1</sub>
+   \* unbounded_emitter *face species amount pos<sub>0</sub> pos<sub>1</sub> … pos<sub>dim</sub>*<sub>-1</sub>
 
 Declares a molecular source for which this surface should absorb
 molecules so as to yield a concentration distribution that is the same
@@ -6058,7 +6062,7 @@ This also affects the binding radius of the reverse reaction, as
 explained in the text. The type irrev requires no parameters. Types
 pgem, pgemmax, pgemmaxw, ratio, unbindrad, pgem2, pgemmax2, and ratio2
 each require one parameter. Types offset and fixed each require first a
-product molecule name and then a *dim*"dimensional vector as the
+product molecule name and then a *dim*-dimensional vector as the
 parameter list. If multiple products are identical, then this placement
 instruction will only be applied to the first of the identical products.
 For this reason, you can also specify that this statement applies to the
@@ -6072,8 +6076,8 @@ work as well.
 To create a ``bounce`` type reaction, for simulating excluded volume,
 enter the *type* as bounce. In this case, enter no parameter for the
 default algorithm or one parameter. The default algorithm, also entered
-with a "2 parameter, performs ballistic reflection for spherical
-molecules. Enter a parameter of "1 for an algorithm in which the
+with a -2 parameter, performs ballistic reflection for spherical
+molecules. Enter a parameter of -1 for an algorithm in which the
 reactant edges get separated by the same amount as they used to overlap,
 along their separation vector (e.g. consider two reactants each of
 radius 1, so the binding radius is set to 2; then, if the
@@ -6087,7 +6091,7 @@ separation, which should be larger than the binding radius.
    expand_rules *iterations*
 
 Expands all of the current reaction rules by *iterations* times. Enter
-*iterations* as "1 for expansion to continue until all rules are fully
+*iterations* as -1 for expansion to continue until all rules are fully
 up-to-date (which will run for a very long time and then cause a
 termination if the rules create an infinite list of species).
 
@@ -6344,7 +6348,7 @@ then read the result. After this line, include a read_file statement and
 list the filename, now with a .net suffix, so that Smoldyn reads in the
 expanded network. There is typically very little error reporting if
 BNG2.pl encounters an error in the .bngl file. To see the errors, run
-Smoldyn with the "v command line option, for verbose operation, and then
+Smoldyn with the -v command line option, for verbose operation, and then
 Smoldyn will display all of the BNG2.pl output.
 
 Statements for lattices
@@ -6988,7 +6992,7 @@ to respond to a difference that is greater than *num*, ‘<’ to respond to
 a difference that is less than *num*, ‘=’ to respond to a difference
 that is exactly equal to *num*, or ‘!’ to respond to a difference that
 does not equal *num*. For example, enter *char* and *num* as ``! 0`` to
-respond to any change in molecule numbers, or as ``\< "10`` to respond
+respond to any change in molecule numbers, or as ``< -10`` to respond
 to any decrease that exceeds 10 molecules.
 
 System observation commands
@@ -7117,11 +7121,11 @@ the line width and lateral position are specified with another pair of
 and *high* values are required which now specify the sides of a
 rectangular cross-section tube. To illustrate the sequence of
 parameters, suppose the command is used in a 3-D system to show
-concentration variation along the *y*"axis. In this case, axis is y, the
+concentration variation along the *y*-axis. In this case, axis is y, the
 first *low* and *high* indicate the ends of the measurement range along
-the *y*"axis, the next *low* and *high* indicate the domain on the
-*x*"direction, and the third *low* and *high* indicate the domain on the
-*z*"direction. Set the average input to 0 to not use averaging, in which
+the *y*-axis, the next *low* and *high* indicate the domain on the
+*x*-direction, and the third *low* and *high* indicate the domain on the
+*z*-direction. Set the average input to 0 to not use averaging, in which
 case there is output at every command execution. Otherwise, this only
 produces an output every average iterations, at which point it outputs
 means that were collected over the preceding iterations. At each output
@@ -7189,7 +7193,7 @@ the center position in *center*, with the number of entries equal to the
 system dimensionality. Enter the vector that points towards the pole in
 *pole*, again with the number of entries equal to the system
 dimensionality. All molecules between *radiusmin* and *radiusmax* will
-be included; set either or both to "1 to remove the respective
+be included; set either or both to -1 to remove the respective
 constraint. The histogram is comprised of *bins* equally spaced bins.
 These bins extend from 0 to 2π for a 2D system and from 0 to π in a 3D
 system. The volume investigated includes all edges. Set the average
@@ -7286,7 +7290,7 @@ about molecules of type *species*. *state* is optional; *species* and/or
    listmols4 *species*(*state*) *filename*
 
 This is identical to listmols3 except that it accounts for wrap-arounds
-when displaying molecule positions. In other words, if the *x*"axis
+when displaying molecule positions. In other words, if the *x*-axis
 ranges from 0 to 10, a molecule starts in the middle at *x* = 5 and
 diffuses to the right for a full lap, returning to the middle of the
 system, then its *x* value is printed here as 15, rather than as 5 as it
@@ -7819,9 +7823,9 @@ step. This command needs to be run at every time step to work properly.
    includeecoli
 
 An *E. coli* shape is defined as a cylinder with hemispherical endcaps,
-where the long axis of the bacterium extends the length of the *x*"axis
+where the long axis of the bacterium extends the length of the *x*-axis
 within the system walls and the radius of both the cylinder and the
-endcaps is half the spacing between the walls that bound the *y*"axis.
+endcaps is half the spacing between the walls that bound the *y*-axis.
 This command moves any molecule that diffuses out of the *E. coli* shape
 back to its location at the previous time step, or to the nearest
 surface of the *E. coli* if it was outside at the previous time step as
