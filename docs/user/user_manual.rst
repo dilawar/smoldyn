@@ -33,9 +33,18 @@ covers all features of Smoldyn. Python provides expressive syntax, easy control
 over the simulation environment, and also brings its whole scientific and
 engineering ecosystem to Smoldyn users.
 
-.. tikz::
-   \node[draw] (config) {Configuration file};
-   
+.. tikz:: Smoldyn can be used as astandalone executable or as a Python extension.
+
+    \tikzstyle{mystyle}=[text width=5cm, align=center, inner sep=5mm, rounded corners, fill=blue!30]
+    \node[mystyle, text width=6cm] (struct) {\Large Internal datastructure};
+    \node[mystyle, above left=5cm of struct, anchor=west] (config) {\Large Configuration file};
+    \node[mystyle, above right=5cm of struct, anchor=east] (python) {\Large Python code};
+    \node[mystyle, below=2cm of struct] (data) {\Large Simualtion data};
+
+    % arrows
+    \draw[-Latex] (config) to[] node[sloped, above]{Smoldyn parser} (struct);
+    \draw[-Latex] (python) to[] node[sloped, above]{Python interpreter} (struct);
+    \draw[-Latex] (struct) to[] node[above, sloped] {Simulate} (data);
 
 In the first mode, the input to Smoldyn is a plain text configuration file.
 This file specifies all of the details of the system, such as the shapes and
@@ -58,6 +67,22 @@ commands.  The first portions of the other chapters provide helpful
 introductions on additional topics.  Later portions of those chapters present
 advanced material that you may want to learn if you continue with Smoldyn.
 
+Installing Smoldyn (Python extension)
+-------------------------------------
+
+Smoldyn requires Python version 3.7 or higher. To install the stable version,
+type the following in your terminal.
+
+::
+
+    python3 -m pip install smoldyn --user
+
+To install the nightly version.
+
+::
+
+    python3 -m pip install smoldyn --user --pre
+
 Installing Smoldyn
 -------------------
 
@@ -76,27 +101,31 @@ Macintosh
    the directory ``/usr/local/bin`` to the list of places where your computer
    will look for executable files, which means that it will find Smoldyn
    correctly.
-5. Test Smoldyn by typing ``smoldyn examples/S1\_intro/bounce3.txt``.
+5. Test Smoldyn by typing ``smoldyn examples/S1\_intro/bounce3.txt`` or
+   (``python3 examples/S1_intro/bound3.py`` in case of Python).
 
-.. warning:: If installation failed
+.. note:: 
 
-   Type `smoldyn "V`. This should run Smoldyn just enough to print out the
+   If installation failed
+   ----------------------
+
+   Type ``smoldyn -V``. This should run Smoldyn just enough to print out the
    version number. If this works, then you have Smoldyn and it runs, but
    Smoldyn wasn't finding the input file.
 
-   __Did the Smoldyn software get installed to the correct place?__
-   Check by typing `ls /usr/local/bin` and see if smoldyn is in the directory.
+   **Did the Smoldyn software get installed to the correct place?**
+   Check by typing ``ls /usr/local/bin`` and see if smoldyn is in the directory.
 
-   __Does your computer know where to look for programs?__
-   Type `echo $PATH` to get a list of colon-separated places where the
-   computer looks. If `/usr/local/bin` isn't in this list, then you need to
+   **Does your computer know where to look for programs?**
+   Type ``echo $PATH`` to get a list of colon-separated places where the
+   computer looks. If ``/usr/local/bin`` isn't in this list, then you need to
    add it to your profile file ([Google `edit path
    mac`](https://www.google.com/search?client=firefox-b"d&q=edit+path+mac))
 
-   __Is your system allowing you to run the code?__ If you're told that
-   permission was denied for running smoldyn, then your computer might not
-   have realized that Smoldyn is an executable program. Enter `sudo chmod +x
-   /usr/local/bin/smoldyn`.
+   **Is your system allowing you to run the code?**
+   If you're told that permission was denied for running smoldyn, then your
+   computer might not have realized that Smoldyn is an executable program.
+   Enter ``sudo chmod +x /usr/local/bin/smoldyn``.
 
    E-mail <support@smoldyn.org> for assistance.
 
