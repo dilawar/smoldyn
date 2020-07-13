@@ -979,6 +979,15 @@ class Partition:
     value: float
 
     def __post_init__(self):
+        """Sets the virtual partitions in the simulation volumne. Two
+        specialization is avaiable: :py:class:`MoleculePerBox`, and
+        :py:class:`Box`.
+
+        See also
+        --------
+        :py:class:`MoleculePerBox`
+        :py:class:`Box`
+        """
         k = _smoldyn.setPartitions(self.name, self.value)
         assert k == _smoldyn.ErrorCode.ok, f"Failed to set partition: {k}"
 
@@ -1153,15 +1162,10 @@ class Command(object):
 
 
 class Simulation(object):
-    """Class to store simulation related attributes. 
-
-    See also
-    -------
-    _smoldyn.simptr
-    """
-
     def __init__(self, stop: float, step: float, quitAtEnd: bool = False, **kwargs):
         """
+        Class to store simulation related attributes. 
+
         Parameters
         ----------
         stop : float
@@ -1175,6 +1179,10 @@ class Simulation(object):
         kwargs :
             output_files :
                 Declare output files.
+
+        See also
+        --------
+        :py:_smoldyn.simptr
         """
         self.start = kwargs.get("start", 0.0)
         self.stop = stop
@@ -1312,7 +1320,11 @@ class Simulation(object):
             assert k == _smoldyn.ErrorCode.ok, f"Failed to set '{item}'"
 
     def setTiff(
-        self, tiffname: Path = Path("OpenGL"), minsuffix: int = 1, maxsuffix: int = 999
+        self,
+        tiffname: Path = Path("OpenGL"),
+        minsuffix: int = 1,
+        maxsuffix: int = 999,
+        every: int = 5,
     ):
         """TIFF related parameters.
 
@@ -1330,13 +1342,15 @@ class Simulation(object):
             Largest possible suffix number of TIFF files that are saved.  Once
             this value has been reached, additional TIFFs cannot be saved.
             Default value is 999.
-            
+        every: int
+            ``every`` is the number of simulation timesteps that should elapse
+            between subsequent snapshots.
         """
         try:
             Path(tiffname).parent.mkdir(parents=True, exist_ok=True)
         except Exception as e:
             __logger__.warning(e)
-        k = _smoldyn.setTiffParams(tiffname, minsuffix, maxsuffix)
+        k = _smoldyn.setTiffParams(every, str(tiffname), minsuffix, maxsuffix)
         assert k == _smoldyn.ErrorCode.ok
 
     def setLight(

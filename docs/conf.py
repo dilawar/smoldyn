@@ -35,6 +35,7 @@ extensions = [
     "sphinx.ext.imgmath",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
+    "sphinx.ext.autosectionlabel",
     "sphinxcontrib.programoutput",
     "sphinxcontrib.plantuml",
     "sphinxcontrib.tikz",
@@ -46,8 +47,8 @@ extensions = [
     "sphinx.ext.autosummary",
 ]
 
+autosectionlabel_prefix_document = True
 autoclass_content = "both"
-
 autodoc_default_options = {
     "member-order": "bysource",
     "special-members": "__init__",

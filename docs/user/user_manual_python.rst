@@ -1,10 +1,6 @@
-############
-User Manual
-############
-
-*************
-Using Smoldyn
-*************
+**************************
+Using Smoldyn With Python
+**************************
 
 Introduction
 ============
@@ -26,136 +22,72 @@ than tens of microns, or dynamics that unfold over tens of minutes, simulation
 methods that are more computationally efficient but less accurate are likely to
 be preferable.
 
-The input to Smoldyn is a plain text configuration file.
-This file specifies all of the details of the system, such as the shapes and
-positions of membranes, the initial types and locations of molecules, diffusion
-coefficients, instructions for the graphical output, and so on. Smoldyn reads
-this file, prints out some information about the system so the user can verify
-that the file was interpreted correctly, and then runs the simulation. As the
-simulation runs, the state of the system can be displayed to a graphics window
-to allow the user to watch what is happening, or to capture the simulation
-result in a movie. Also, it is possible to enter commands in the configuration
-file that are executed at runtime, and which output quantitative results from
-the simulation to text files. Smoldyn quits when the simulation is complete.
+There are two ways to use Smoldyn simulator. First, as a standalone command
+line program which reads a plain text configuration file (see :ref:`user_manual:User Manual`),
+and second, as a Python language library or an extension module. The later is
+added recently and covers all features of Smoldyn. Python provides expressive
+syntax, easy control over the simulation environment, and also brings its whole
+scientific and engineering ecosystem to Smoldyn users. This manual is a
+modified from :ref:`user_manual:User Manual` for Python users.
+
+.. tikz:: Smoldyn can be used as astandalone executable or as a Python extension.
+
+    \tikzstyle{mystyle}=[text width=5cm, align=center, inner sep=5mm, rounded corners, fill=blue!30]
+    \node[mystyle, text width=6cm] (struct) {\Large Internal datastructure};
+    \node[mystyle, above left=5cm of struct, anchor=west] (config) {\Large Configuration file};
+    \node[mystyle, above right=5cm of struct, anchor=east] (python) {\Large Python code};
+    \node[mystyle, below=2cm of struct] (data) {\Large Simualtion data};
+
+    % arrows
+    \draw[-Latex] (config) to[] node[sloped, above]{Smoldyn parser} (struct);
+    \draw[-Latex] (python) to[] node[sloped, above]{Python interpreter} (struct);
+    \draw[-Latex] (struct) to[] node[above, sloped] {Simulate} (data);
+
+As a Python extension module, the input to Smoldyn is a Python program. Two
+levels of APIs are available to Python users. First one is the low level API
+which is essentially the C API described in `Library libsmoldyn`_ exposed to
+Python using excellent Pybind11 library. This API is meant for developers.
+Second is a high level API described in `Python API`. It is recommended for
+Smoldyn users. The high level API is written in terms of the low-level API for
+easier use and better error handling.
+
+The Python program specifies all of the details of the system, such as the
+shapes and positions of membranes, the initial types and locations of
+molecules, diffusion coefficients, instructions for the graphical output, and
+so on. Python reads this file and builds Smoldyn's internal datastructures and
+prints out some information about the system so the user can verify that the
+file was interpreted correctly, and then runs the simulation. As the simulation
+runs, the state of the system can be displayed to a graphics window to allow
+the user to watch what is happening, or to capture the simulation result in a
+movie. Also, it is possible to enter commands in the program file that are
+executed at runtime, and which output quantitative results from the simulation
+to text files. 
 
 **About this User’s Manual**
 
 Do not read the manual from end to end. New users should read the
-`Installing Smoldyn`_ chapter as needed and the `Getting Started`_ chapter. The last
-half of the manual is a reference section which lists all statements and
-commands.  The first portions of the other chapters provide helpful
-introductions on additional topics.  Later portions of those chapters present
-advanced material that you may want to learn if you continue with Smoldyn.
+:ref:`Installing Smoldyn` chapter as needed and the :ref:`Getting Started`
+chapter. The last half of the manual is a reference section which lists all
+statements and commands.  The first portions of the other chapters provide
+helpful introductions on additional topics.  Later portions of those chapters
+present advanced material that you may want to learn if you continue with
+Smoldyn.
 
-Installing Smoldyn
--------------------
+Installing Smoldyn (Python extension)
+-------------------------------------
 
-Macintosh
-^^^^^^^^^
+Smoldyn requires Python version 3.7 or higher. To install the stable version,
+type the following in your terminal.
 
-1. At the Smoldyn download webpage, http://www.smoldyn.org/download.html,
-   download the latest Mac version.
-2. Open your ``Terminal`` application, which is in your
-   ``Applications/Utilities`` directory.
-3. Change directories to this download directory (probably type ``cd
-   Desktop/smoldyn-2.xx-mac``, or something similar).
-4. Type ``sudo ./install.sh`` and enter your computer password when prompted.
-   If you are asked whether you want the installer to update your environment
-   ``PATH`` variable, you should generally say yes (enter ``y``). This will add
-   the directory ``/usr/local/bin`` to the list of places where your computer
-   will look for executable files, which means that it will find Smoldyn
-   correctly.
-5. Test Smoldyn by typing ``smoldyn examples/S1\_intro/bounce3.txt``.
+::
 
-.. note:: 
+    python3 -m pip install smoldyn --user
 
-   If installation failed
-   ----------------------
+To install the nightly version.
 
-   Type ``smoldyn -V``. This should run Smoldyn just enough to print out the
-   version number. If this works, then you have Smoldyn and it runs, but
-   Smoldyn wasn't finding the input file.
+::
 
-   **Did the Smoldyn software get installed to the correct place?**
-   Check by typing ``ls /usr/local/bin`` and see if smoldyn is in the directory.
-
-   **Does your computer know where to look for programs?**
-   Type ``echo $PATH`` to get a list of colon-separated places where the
-   computer looks. If ``/usr/local/bin`` isn't in this list, then you need to
-   add it to your profile file ([Google `edit path
-   mac`](https://www.google.com/search?client=firefox-b-d&q=edit+path+mac))
-
-   **Is your system allowing you to run the code?**
-   If you're told that permission was denied for running smoldyn, then your
-   computer might not have realized that Smoldyn is an executable program.
-   Enter ``sudo chmod +x /usr/local/bin/smoldyn``.
-
-   E-mail <support@smoldyn.org> for assistance.
-
-Windows
-^^^^^^^^
-
-1. At the Smoldyn download webpage,
-   http://www.smoldyn.org/download.html, download the latest Windows
-   version. Your browser may warn you about the dangers of downloading
-   software, but this file is almost certainly ok; I compiled it on a
-   clean Windows computer using only files that I wrote myself and a few
-   widely used libraries, so it is extremely unlikely that there is a
-   virus in it.
-
-**If you have administrator privileges**
-
-2. Extract the zip file. Do this by right-clicking on the icon of the
-   downloaded file and selecting ``extract to smoldyn-2.xx-windows``.
-   This should extract the file to your home directory.
-
-3. Open a ``Command Prompt`` application as administrator. You can find
-   the command prompt by searching for it with the Start menu. Rather
-   than left-clicking on the Command prompt result that appears, right
-   click on it, and select ``run as administrator.`` The computer emits
-   scary warnings, but reply yes anyhow.
-
-4. Change directories to the Smoldyn directory (probably type
-   ``cd    Downloads/smoldyn-2.xx-windows``, or something similar).
-
-5. Type ``install``. This will copy the Smoldyn files to a new Smoldyn
-   subdirectory of your ``C:\\Program Files`` directory. This will also
-   update your ``%PATH%`` environment variable so your computer knows
-   where to find the software. Note that it is possible for the
-   installer to corrupt your ``PATH`` variable if it was unusually long
-   (about 1024 characters). If this happens, revert the variable using
-   the file ``PATH_old.txt``, where the installer saves the existing
-   ``PATH`` variable before modifying it.
-
-6. Exit the command prompt as administrator, and start a new command
-   prompt, not as administrator.
-
-7. Test Smoldyn by typing ``smoldyn examples/S1_intro/bounce3.txt``.
-
-**If you don’t have administrator privileges**
-
-2. Extract the zip file to the desired location. Do this by
-   right-clicking on the icon of the downloaded file and selecting
-   ``extract file...`` and then enter the directory where you want the
-   file.
-
-3. Open a ``Command Prompt`` application. You can find it by searching
-   for it with the Start menu.
-
-4. In the Command Prompt, change directories to the Smoldyn download
-   (use ``cd`` to change directories, and ``dir`` to list directory
-   contents).
-
-5. Test Smoldyn by typing ``smoldyn examples/S1\_intro/bounce3.txt``.
-   Smoldyn should work just as well as if it was installed, but you will
-   need to be in this directory to run it.
-
-.. note:: If installation failed
-
-   If you get errors due to missing dll files, look in the dll directory in
-   the Smoldyn download. If the needed dll file is in there, then simply copy
-   it to the same directory where the smoldyn.exe file is. E-mail
-   <support@smoldyn.org> for assistance.
+    python3 -m pip install smoldyn --user --pre
 
 Compiling Smoldyn
 -----------------
@@ -175,15 +107,16 @@ Compiling on Macintosh
    work properly. Next, start XCode and go to the ``Preferences...``
    menu item, click on ``downloads`` and install the
    ``Command line tools``.
-2. OpenGL should already be installed on your computer. To check, type
+2. You will also need Python3.7 or higher installed on your system.
+3. OpenGL should already be installed on your computer. To check, type
    ``ls    /System/Library/Frameworks`` and you should see folders
    called GLUT.framework and OpenGL.framework. If they aren’t there,
    then you’ll need to get them.
-3. You will need the CMake configuration software. To see if you already
+4. You will need the CMake configuration software. To see if you already
    have it, type ``cmake``; this will produce the help information if
    you have it, or an error message if not. If you don’t have it, you
    need to download and install it.
-4. Libtiff is a library that Smoldyn uses for saving tiff format images,
+5. Libtiff is a library that Smoldyn uses for saving tiff format images,
    which you probably do not have. It is not required for Smoldyn to
    run, but it necessary to save images. One way to install Libtiff is
    to download it from http://www.libtiff.org, uncompress it, and
@@ -217,196 +150,65 @@ Compiling on Macintosh
    ```
 
 5. Install Smoldyn by changing to the ``cmake`` directory. Then type ``cmake
-   ..``, then ``make``, and then ``sudo make install``, and finally your
-   password. Some custom installation options can be selected with the ``cmake
-   ..`` line if you want them; they are listed below in the sections on
-   installing to a custom location and on installation problems, and also in
-   the Smoldyn programmers manual. To clean up temporary files, *which is
-   essential if you want to try building a second time*, first enter ``pwd``
-   and confirm that you are still in the ``cmake/`` directory (don’t continue
-   if not!). Then, type ``rm -rf *`` to clear out all prior build stuff.
+   ..``, then ``make wheel``. It will generate a smoldyn wheel file in
+   ``cmake`` directory. You can install it using ``pip`` e.g., ``pip install
+   smoldyn-2.63.whl``.
 
 Test Smoldyn
 ------------
 
--  Type ``smoldyn -V`` to just print out the Smoldyn version number.  If it
-   doesn’t work, then the most likely problem is that your system is not set up
-   to run programs that are in your ``/usr/local/bin`` directory, which is
-   where Smoldyn is installed by default. To fix this temporarily, type
-   ``export PATH=$PATH:/usr/local/bin``; to fix it permanently, although it
-   will only take effect after you open a new terminal window, use emacs or
-   some other editor to edit the file ``~/.profile`` and add the line ``export
-   PATH=$PATH:/usr/local/bin``.
+-  Type :code:`python3 -c "import smoldyn; print(smoldyn.__version__)"` to just
+   print out the Smoldyn version number.  If it doesn’t work, then the most
+   likely problem is that you have multiple Python versions and the Python
+   executable is  unable to locate the Smoldyn pacakge.
 
--  Type ``smoldyn examples/S8_reactions/lotvolt/lotvolt.txt`` to run a
+-  Type :code:`python3 examples/S8_reactions/lotvolt/lotvolt.py` to run a
    Lotka-Volterra simulation. If a graphics window doesn’t appear, then the
-   OpenGL linking somehow failed. Otherwise, press ‘T’ (upper-case) at some
+   OpenGL linking somehow failed. Otherwise, press ``T`` (upper-case) at some
    point during the simulation to save a tiff-format image of the graphical
    display. If it works, it will be saved to the current directory as
-   OpenGL001.tif; if not, then the libtiff linking somehow failed.
-
-Compiling options
------------------
-
-Various building options are possible with the CMake build system, of
-which the most important are as follows. In all cases, append these to
-the ``cmake ..`` command.
-
--  ``DOPTION_STATIC=ON`` Build using static libraries
--  ``DCMAKE_BUILD_TYPE=...`` Choose CMake build type options are:
-   "  None
-   "  Debug
-   "  Release (default)
-   "  RelWithDebInfo
-   "  MinSizeRel
--  ``DOPTION_USE_OPENGL=OFF`` Build without graphics support
--  ``DOPTION_USE_LIBTIFF=OFF`` Build without LibTiff support
--  ``DOPTION_USE_ZLIB=OFF`` Build without ZLib support
--  ``OPTION_TARGET_SMOLDYN=OFF`` Don’t build stand-alone Smoldyn program
--  ``DOPTION_TARGET_LIBSMOLDYN=ON`` Build LibSmoldyn library
--  ``DOPTION_NSV=ON`` Build with next subvolume support
--  ``DOPTION_VTK=ON`` Build with VTK output support
-
-By default, the Smoldyn build system installs Smoldyn to either the
-``/usr`` or the ``/usr/local`` directories, depending on your system.
-These are the standard places for programs like Smoldyn, but you will
-need root access for the installation (typically only system
-administrators have the necessary ``su`` or ``sudo`` access to install
-to these locations). If you use a computer on a shared computer, you may
-not have this access. If this is the case, then you will have to pick a
-different install directory, such as ``/usr``. There are standard
-options to configure Smoldyn to install here, for the CMake build system
-
-The drawback to installing in a non-standard location is that your
-system may not find Smoldyn when you try to run it. To solve this, you
-need to add the directory ``/usr``, or wherever you installed Smoldyn,
-to your ``PATH`` variable. This is explained above in instruction 5a for
-the regular Macintosh installation, except that here you would add
-``export PATH=$PATH:/usr/bin``.
-
-Compiling on a UNIX/Linux system
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-For the most part, installing on a UNIX or Linux system is the same as
-for Macintosh, described above. Following are a few Linux-specific
-notes.
-
-To download Smoldyn from a command line, type ``wget
-http://www.smoldyn.org/smoldyn-2.xx.tar.gz``, where the ``xx`` is the current
-version number. Then unpack it with ``tar xzvf smoldyn-2.xx.tar.gz``.
-
-For a full installation, you will need OpenGL and Libtiff. I don’t know how to
-install them for all systems, but it turned out to be easy for my Fedora
-release 7. I already had OpenGL, but not the OpenGL glut library nor Libtiff.
-To install them, I entered ``sudo yum install freeglut-devel`` and ``sudo yum
-install libtiff``, respectively, along with my password.
-
-Ubuntu systems are slightly more finicky than others. First, you may need to
-install several things as follows. Install a C++ compiler with ``sudo apt-get
-install g++``, install a Python header file with ``sudo apt-get install
-python-dev``, install the OpenGL glut library with ``sudo apt-get install
-freeglut3-dev``, and install the libtiff library with ``sudo apt-get install
-libtiff4-dev``.
-
-Running Smoldyn remotely
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-It can be helpful to have Smoldyn installed on computer A and run from computer
-B. Running Smoldyn without graphics is trivial. Just ssh into computer A as
-normal, and run Smoldyn with ``smoldyn filename.txt -t``, where the -t flag
-implies text-only operation. If you want graphics though, then log in with
-``ssh -Y me@compA/directory`` and run Smoldyn as normal. Graphics will be slow
-but should be functional.
-
-Alternatively, I’ve found the free software TeamViewer to be a convenient
-method for working on computers remotely. An advantage of this method is that
-it works even if there are institutional firewalls that prohibit remote
-computer access.
-
-Building on Linux
-^^^^^^^^^^^^^^^^^
-
-Fedora/CentOS
-""""""""""""""
-
-.. code:: bash
-
-   sudo dnf install gcc_gc++ cmake freeglut_devel libtiff_devel libXmu_devel libXi_devel
-
-openSUSE
-"""""""""
-
-.. code:: bash
-
-   sudo zypper install gcc_gc++ cmake freeglut_devel libtiff_devel libXmu_devel libXi_devel
-
-Debian/Ubuntu and other derivatives
-"""""""""""""""""""""""""""""""""""""
-
-.. code:: bash
-
-    sudo apt install g++ cmake libtiff_dev libjpeg_dev freeglut3_dev libxi_dev libxmu_dev
-
+   ``OpenGL001.tif``; if not, then the libtiff linking somehow failed.
 
 Getting Started
 ================
 
-Smoldyn should be run from a command line interface. For Macs, use the
-application called ``Terminal``, which you can find by searching for it,
-or it should be in your ``/Applications/Utilities`` directory. For
-Windows, use the application called ``Command Prompt``, which is easiest
-to find by searching for it using the ``Start Menu``.
+We assume that you are familiar with the Python and have your environment
+setup. You need Python version 3.7 or higher and a text editor such as ``vim``,
+``vscode``, ``gedit``, ``pycharm``, ``spyder`` and many more. 
 
-Open Smoldyn files in a text editor. For Macs, TextEdit works well,
-*except* that it does not let you start with a new file and then save it
-as plain text. Instead, it only saves new files as rich text format. The
-solution is to copy an example file first, rename it to your new file
-name, and then edit it. You can also use Microsoft Word and save as
-plain text. For Windows, NotePad does not work well because it doesn’t
-display line breaks correctly. Instead, use Microsoft Word and save as
-plain text.
-
-From a command line, run Smoldyn by entering smoldyn followed by the
-name of your input file. For example, if you are in the Smoldyn parent
-directory, enter ``smoldyn examples/template.txt`` to run that file. You
-should see output that looks like this:
+From a command line, run Smoldyn program by entering ``python3`` followed by
+the name of your program file. For example, if you are in the Smoldyn parent
+directory, enter ``python3 examples/template.py`` to run that file. You should
+see output that looks like this:
 
 |image0|
 
-This file shows enzymatic catalysis, in which green dots are substrate,
-blue dots are product, enzyme is dark red, and enzyme-substrate
-complexes are orange. The substrate and product molecules are
-``solution phase``, while the enzyme and enzyme-substrate complexes are
-``surface-bound`` (e.g. the enzyme is an integral membrane protein).
+This file shows enzymatic catalysis, in which green dots are substrate, blue
+dots are product, enzyme is dark red, and enzyme-substrate complexes are
+orange. The substrate and product molecules are solution phase, while the
+enzyme and enzyme-substrate complexes are surface-bound (e.g. the enzyme is an
+integral membrane protein).
 
-Note that you can zoom in or out with the ‘=’ and ‘"’ keys and you can
-pan with shift-arrow keys (arrow keys enable rotating with 3D
-simulations, but not here because this is a 2D simulation). Pressing ‘0’
-returns to the default view. You can also press shift"‘T’ to take a
-snapshot of the output, the space bar to pause the simulation, or
-shift"‘Q’ to quit the simulation.
+Note that you can zoom in or out with the ``=`` and ``"`` keys and you can pan
+with shift-arrow keys (arrow keys enable rotating with 3D simulations, but not
+here because this is a 2D simulation). Pressing ``0`` returns to the default
+view. You can also press shift-``T`` to take a snapshot of the output, the
+space bar to pause the simulation, or shift-``Q`` to quit the simulation.
 
-Smoldyn input file format
--------------------------
+An example program 
+-------------------
 
-Here is the complete Smoldyn input file for the template.txt simulation.
+Here is the complete Smoldyn input file for the template.py simulation.
 This file includes most of Smoldyn’s core features.
-
-.. literalinclude:: /../examples/template.txt
-   :language: bash
-   :linenos:
-
-Same model is written in Python.
 
 .. literalinclude:: /../examples/template.py
    :language: python
    :linenos:
 
-
 Comments
 --------
 
-All text after a ``#`` character is a comment and is ignored by Smoldyn.
+All text after a ``#`` character is a comment and is ignored by python.
 In these comments, it is good practice to list basic information about
 the model such as what it represents, the model units, who wrote the
 file, and distribution terms. This particular file has comments on
@@ -416,15 +218,16 @@ typically more annoying than useful.
 Measurement units
 ------------------
 
-Notably absent from input file are any measurement units. Instead, you
-need to choose a single set of units and to then use these throughout
-the file. For example, cgs units (centimeter-gram-second) and mks units
+Notably absent from input program are any measurement units. Instead, you need
+to choose a single set of units and to then use these throughout the file. For
+example, cgs units (centimeter-gram-second) and mks units
 (meter-kilogram-second) are two standard unit systems. These are too
-large-scale to be convenient for most Smoldyn simulations, so
-micron-second and nanometer-microsecond tend to be preferable. The
-following table lists reasonably typical values for different processes
-in several different unit systems.
+large-scale to be convenient for most Smoldyn simulations, so micron-second and
+nanometer-microsecond tend to be preferable. The following table lists
+reasonably typical values for different processes in several different unit
+systems.
 
+.. todo:: Implement unit support in User API using pint module.
 
 .. list-table:: 
    :header-rows: 1
