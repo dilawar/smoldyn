@@ -34,12 +34,12 @@ release = "2.63.dev"
 extensions = [
     "sphinx.ext.imgmath",
     "sphinx.ext.autodoc",
+    "sphinx.ext.todo",
     "sphinx.ext.napoleon",
     "sphinxcontrib.programoutput",
     "sphinxcontrib.inlinesyntaxhighlight",
     "sphinx.ext.autosectionlabel",
     "sphinxcontrib.tikz",
-    "sphinx.ext.todo",
     "sphinx_rtd_theme",
     "recommonmark",
     "breathe",
@@ -49,6 +49,7 @@ extensions = [
 
 latex_engine = "xelatex"
 imgmath_latex = 'xelatex'
+#imgmath_image_format = 'svg'
 
 autosectionlabel_prefix_document = True
 autosectionlabel_maxdepth = 2

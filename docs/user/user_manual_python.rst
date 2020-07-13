@@ -34,8 +34,8 @@ As a Python extension module, the input to Smoldyn is a Python program. Two
 levels of APIs are available to Python users. First one is the low level API
 which is essentially the C API described in :doc:`../developer/libsmoldyn`
 exposed to Python using excellent Pybind11 library. This API is meant for
-developers.  Second is a high level API described in :doc:`../python/api`. It
-is recommended for Smoldyn users. The high level API is written in terms of the
+developers. Second is a high level API described in :doc:`../python/api`. It is
+recommended for Smoldyn users. The high level API is written in terms of the
 low-level API for easier use and better error handling.
 
 The Python program specifies all of the details of the system, such as the
@@ -53,8 +53,8 @@ to text files.
 **About this User’s Manual**
 
 Do not read the manual from end to end. New users should read the
-:ref:`Installing Smoldyn <user-manual>` chapter as needed and the
-:ref:`<user_manual:Getting Started>` chapter. The last half of the manual is a
+:ref:`user_manual:Installing Smoldyn` chapter as needed and the
+:ref:`user_manual:Getting Started` chapter. The last half of the manual is a
 reference section which lists all statements and commands.  The first portions
 of the other chapters provide helpful introductions on additional topics.
 Later portions of those chapters present advanced material that you may want to
@@ -76,70 +76,6 @@ To install the nightly version.
 
     python3 -m pip install smoldyn --user --pre
 
-Compiling Smoldyn
------------------
-
-Compiling on Macintosh
-^^^^^^^^^^^^^^^^^^^^^^
-
-1. You will need a C compiler and the Make utility. To check if you have
-   them, simply type ``gcc`` at a shell prompt. If it says
-   ``command not found``, then you need to get it. To get it, go to
-   http://developer.apple.com/xcode and click on the
-   ``view in Mac App store button`` to be taken to the Xcode site in the
-   Mac App store. Then, click on the ``Free`` button, register for a
-   free Apple Developer Connection account if you don’t have one
-   already, and click on the same button, which is now called
-   ``Install App``. This will install XCode. However, it still won’t
-   work properly. Next, start XCode and go to the ``Preferences...``
-   menu item, click on ``downloads`` and install the
-   ``Command line tools``.
-2. You will also need Python3.7 or higher installed on your system.
-3. OpenGL should already be installed on your computer. To check, type
-   ``ls    /System/Library/Frameworks`` and you should see folders
-   called GLUT.framework and OpenGL.framework. If they aren’t there,
-   then you’ll need to get them.
-4. You will need the CMake configuration software. To see if you already
-   have it, type ``cmake``; this will produce the help information if
-   you have it, or an error message if not. If you don’t have it, you
-   need to download and install it.
-5. Libtiff is a library that Smoldyn uses for saving tiff format images,
-   which you probably do not have. It is not required for Smoldyn to
-   run, but it necessary to save images. One way to install Libtiff is
-   to download it from http://www.libtiff.org, uncompress it, and
-   install it. To install it, start a terminal window, change to the
-   libtiff directory, and follow the README instructions: type
-   ``./configure``, then ``make``, then ``sudo make install`` and your
-   password. This will install libtiff header files to
-   /usr/local/include and libtiff library archives in /usr/local/lib.
-
-.. tip:: Installing libtiff using MacPorts
-
-   Another method (but one which I think is harder) is to use MacPorts or Fink.
-   For MacPorts, type `port search libtiff`. If you get the error message 
-   `port: command not found`, then you don’t have MacPorts. If this is the case, then you
-   can get MacPorts from <www.macports.org> and try again. When the command works,
-   it should list a few packages, one of which is called `tiff @3.8.2 (graphics)`,
-   or something very similar.  Install it by typing `sudo port install tiff`,
-   followed by your password. This will install libtiff to
-   `/opt/local/var/macports/software/`. 
-
-   This is great, except that the Smoldyn build system prefers for libtiff to
-   be in `/usr/local/lib`. The solution is to set `LIBTIFF_CFLAGS` and
-   `LIBTIFF_LDFLAGS` manually when you type `./configure` for Smoldyn. This will
-   override Smoldyn’s search for the libraries and will link them in properly.
-   For Fink, exactly the same advice applies, except that Fink installs
-   libraries to `/sw`. For example, if libtiff is installed to `/sw/local`, then
-   configure with: 
-
-   ```
-   $ LIBTIFF_CFLAGS="-I/sw/local/include" LIBTIFF_LDFLAGS=n-L/sw/local/lib -ltiff" ./configure
-   ```
-
-5. Install Smoldyn by changing to the ``cmake`` directory. Then type ``cmake
-   ..``, then ``make wheel``. It will generate a smoldyn wheel file in
-   ``cmake`` directory. You can install it using ``pip`` e.g., ``pip install
-   smoldyn-2.63.whl``.
 
 Test Smoldyn
 ------------
@@ -159,9 +95,8 @@ Test Smoldyn
 Getting Started
 ================
 
-We assume that you are familiar with the Python and have your environment
-setup. You need Python version 3.7 or higher and a text editor such as ``vim``,
-``vscode``, ``gedit``, ``pycharm``, ``spyder`` and many more. 
+We assume that you are familiar with the Python language and have your
+programming environment set up already. You need Python version 3.7 or higher.
 
 From a command line, run Smoldyn program by entering ``python3`` followed by
 the name of your program file. For example, if you are in the Smoldyn parent
@@ -214,7 +149,9 @@ nanometer-microsecond tend to be preferable. The following table lists
 reasonably typical values for different processes in several different unit
 systems.
 
-.. todo:: Implement unit support in User API using pint module.
+.. todo:: 
+
+   Implement unit support in User API using pint module.
 
 .. list-table:: 
    :header-rows: 1
@@ -275,57 +212,27 @@ systems.
      - 0.1 px ms\ :sup:`-1`
 
 .. note::
+
    A pixel, abbreviated px, is defined as a length of 10 nm. In the
    concentration column, ‘6’ is short for 6.022045. In the bimolecular
    reactions column, 1.7 is short for 1.660565.
 
-Model parameters
------------------
-
-It is easier to read and edit Smoldyn files if the model parameters that you
-might want to vary are not hard-coded into the model, but are collected at the
-top of the file in a collection of define statements.  These statements
-instruct Smoldyn to perform simple text replacement, replacing every subsequent
-instance of the matching text with the following substitution text. The
-statement ``define K_FWD 0.001``, for example, tells Smoldyn to replace any
-subsequent ``K_FWD`` text with 0.001; in this case, this is a reaction rate
-constant. The substitution text can be a number, multiple numbers, a string, or
-even nothing at all.
-
-Graphical output
-----------------
-
-Graphical output can be displayed with several levels of quality. At the
-bottom end is no output at all, achieved with the ``graphics none``
-statement or by using a ``-t`` flag on the command line
-(e.g. ``$ smoldyn template.txt -t``). Next the ``graphics opengl`` level
-produces crude graphics, ``graphics opengl_good`` is passable, and
-``opengl_better`` is reasonably good. Improving the graphics quality
-slows simulations down, so a good approach is to use the plain
-``opengl`` level for model development, no graphics when generating
-simulation results, and ``opengl_better`` when preparing publication
-figures.
-
-As used here, the ``framethickness`` statement tells Smoldyn to not show
-a frame around the entire simulation volume. There are also other
-statements for controlling the background color, the frame display, etc.
 
 Space and time
 --------------
 
-Smoldyn can run simulations in 1, 2, or 3 dimensions. Here, the
-``dim 2`` statement says that this is a 2D simulation. The following two
-``boundaries`` statements define the system volume, showing that it
-extends from -1 to 1 on the x axis, and then the same on the y axis.
-Smoldyn still tracks any molecules beyond these boundaries but it
-becomes less efficient if there are substantial dynamics there.
+Smoldyn can run simulations in 1, 2, or 3 dimensions which is the first thing
+Smoldyn needs to know. The function call ``setBounds`` define the system volume,
+showing that it extends from -1 to 1 on the x axis, and then the same on the y
+axis.  Smoldyn still tracks any molecules beyond these boundaries but it
+becomes less efficient if there are substantial dynamics there. 
 
-Simulations use fixed time steps. They start at the time given with
-``time_start``, stop at the time given with ``time_stop`` and have steps
-with the size given with ``time_step``. For typical simulations of
-subcellular processes, 10 ms is often a reasonable time step. Longer
-time steps make the simulation run faster and shorter time steps produce
-more accurate results.
+Simulations (usually the last step, see :py:class:`.smoldyn.Simulation`) use
+fixed time steps. They start at the time given with ``start``, stop at the time
+given with ``stop`` and have steps with the size given with ``step``. For
+typical simulations of subcellular processes, 10 ms is often a reasonable time
+step. Longer time steps make the simulation run faster and shorter time steps
+produce more accurate results.
 
 .. tip:: Choosing time step
 
@@ -334,26 +241,42 @@ more accurate results.
    results of the desired accuracy but also long enough for adequate
    efficiency.
 
+Graphical output
+----------------
+
+Graphical output can be displayed with several levels of quality. At the bottom
+end is no output at all, achieved with the argument ``"none"`` to the
+:py:meth:`.smoldyn.Simulation.setGraphics` function. Improving the graphics
+quality slows simulations down, so a good approach is to use the plain
+``opengl`` for model development, no graphics when generating simulation
+results, and ``opengl_better`` when preparing publication figures.
+
+As used here, the ``frame_thickness=0`` argument tells Smoldyn to not show a
+frame around the entire simulation volume. There are also other statements for
+controlling the background color, the frame display, etc. To set graphical
+output, you need to create an object of :py:class:`.smoldyn.Simulation`  first.
+
+
 Molecules
 ---------
 
 All of the chemical species in the simulation need to be declared with a
-``species`` statement before they can be used in the simulation (except
-when using rule-based modeling, as explained later on).
+:py:class:`.smoldyn.Species` initialization before they can be used in the
+simulation
 
-The following ``difc``, ``color``, and ``display_size`` statements
-define the diffusion coefficients, graphical display colors, and
-graphical display sizes for these different species. These parameters
-can vary for different molecule states, meaning whether the molecule is
-in solution or bound to a surface; the latter case, it can be bound to a
-surface in any of the ``front``, ``back``, ``up``, or ``down`` states.
-If no molecule state is listed, such as in the statement ``difc S 3``,
-this applies to only the solution state; if one of these substrate
-molecules were to bind to a surface, it would not diffuse because the
-surface-bound diffusion coefficients are all still equal to 0. For
-convenience, these species parameters can be defined for all of the
-states at once by using ``all`` as the state, such as in the statement
-``color S(all) green``.
+The ``difc``, ``color``, and ``display_size`` arguments to the
+:py:class:`.smoldyn.Species` define the diffusion coefficients, graphical
+display colors, and graphical display sizes for these different species. These
+parameters can vary for different molecule states, meaning whether the molecule
+is in solution or bound to a surface; the latter case, it can be bound to a
+surface in any of the ``front``, ``back``, ``up``, or ``down`` states.  If no
+molecule state is provided, such as in the statement ``S = sm.Species("S",
+difc=3, color="green", display_size=0.02)``, this applies to only the solution
+state; if one of these substrate molecules were to bind to a surface, it would
+not diffuse because the surface-bound diffusion coefficients are all still
+equal to 0. For convenience, these species parameters can be defined for all of
+the states at once by using ``all`` as the state, such as in the statement
+``S = sm.Species("S", difc=3, color=dict(all="green"), display_size=0.02)``.
 
 The behavior of the ``display_size`` statement depends on the graphical
 output style. For the ``opengl`` graphics level, the display size value
@@ -366,32 +289,39 @@ Surfaces
 --------
 
 Smoldyn surfaces are infinitesimally thin structures that can be used to
-represent cell membranes, obstructions, system boundaries, or other
-things. They are 2D structures in 3D simulations, or 1D lines or curves
-in 2D simulations (or 0D points in 1D simulations). Each surface has a
-``front`` and a ``back`` face, so molecules can interact differently
-with the two sides of a surface. Each surface is composed of one or more
-``panel``\ s, where each panel can be a rectangle, triangle, sphere,
-hemisphere, cylinder, or a disk. Surfaces can be disjoint, with separate
-non-connected portions. However, all portions of a given surface type
-are displayed in the same way and interact with molecules in the same
-way.
+represent cell membranes, obstructions, system boundaries, or other things.
+They are 2D structures in 3D simulations, or 1D lines or curves in 2D
+simulations (or 0D points in 1D simulations). Each surface has a ``front``
+(:py:attr:`.smoldyn.Surface.front`) and a ``back``
+(:py:attr:`.smoldyn.Surface.back`) face, so molecules can interact differently
+with the two sides of a surface. Each surface is composed of one or more panels
+(:py:class:`.smoldyn.Panel`), where each panel can be a rectangle
+(:py:class:`.smoldyn.Rectangle`), triangle (:py:class:`.smoldyn.Triangle`),
+sphere (:py:class:`.smoldyn.Sphere`), hemisphere
+(:py:class:`.smoldyn.Hemisphere`), cylinder (:py:class:`.smoldyn.Cylinder`), or
+a disk (:py:class:`.smoldyn.Disk`). Surfaces can be disjoint, with separate
+non-connected portions. However, all portions of a given surface type are
+displayed in the same way and interact with molecules in the same way.
 
-Surfaces get defined in ``surface blocks``, which start with
-``start_surface`` and the surface name, and end with ``end_surface``.
-Within the surface block, define molecule interactions with this surface
-using the ``action`` or ``rate`` statements. In this case, the statement
-``action all both reflect`` states that molecules of all species should
-reflect off of this surface upon collision with either of the two faces.
-Other action options are ``absorb`` and ``transmit``, for absorption by
-the surface, and transmission through the surface, respectively. Use the
-``rate`` statement, which is not used in this file, for adsorption,
-desorption, or partial transmission through a surface.
+For a given type of :py:class:`.smoldyn.Surface`, define molecule interactions
+with this surface using the function :py:meth:`.smoldyn.Surface.addAction` or
+:py:meth:`.smoldyn.Surface.addRate` statements. In this case, the statement
+``surface.both.addAction([S, E, P, ES], "reflect")`` states that molecules of
+all species should reflect off of this surface upon collision with either of
+the two faces.  Other action options are ``absorb`` and ``transmit``, for
+absorption by the surface, and transmission through the surface, respectively.
+Use the :py:meth`.smoldyn.Surface.addRate` statement, which is not used in
+this file, for adsorption, desorption, or partial transmission through a
+surface.
 
-Define surface graphics using the ``color`` and ``thickness``
-statements. For 3D simulations, the ``polygon`` statement is useful as
-well. With it, you can specify whether you want Smoldyn to draw just the
-panel edges (typically the best choice), the entire panel face, or other
+Define surface graphics using the :py:meth:`.smoldyn.Surface.setStyle` function
+by setting ``color`` and ``thickness`` arguments, e.g.,
+``membrane.both.setStyle(color="black", thickness=1)`` sets the color and
+thickness of the both faces of the surface ``membrane``.  
+
+For 3D simulations, the :py:meth:`.smoldyn.Surface.setStyle` statement is
+useful as well. With it, you can specify whether you want Smoldyn to draw just
+the panel edges (typically the best choice), the entire panel face, or other
 options.
 
 Surface panels definitions list each panel within the surface, including

@@ -190,7 +190,7 @@ Compiling on Macintosh
    password. This will install libtiff header files to
    /usr/local/include and libtiff library archives in /usr/local/lib.
 
-.. tip:: Installing libtiff using MacPorts
+.. note:: Installing libtiff using MacPorts
 
    Another method (but one which I think is harder) is to use MacPorts or Fink.
    For MacPorts, type `port search libtiff`. If you get the error message 
@@ -391,12 +391,6 @@ This file includes most of Smoldyn’s core features.
 
 .. literalinclude:: /../examples/template.txt
    :language: bash
-   :linenos:
-
-Same model is written in Python.
-
-.. literalinclude:: /../examples/template.py
-   :language: python
    :linenos:
 
 
@@ -1280,7 +1274,9 @@ with fluctuations. This is as expected for free diffusion. The expected
 fluctuation size, shown in the panel with light black lines, is given
 with
 
-.. math:: |\text{mean}-\text{starting point}| = \sqrt{\frac{2Dt}{n}}
+.. math::
+
+   |\text{mean}-\text{starting point}| = \sqrt{\frac{2Dt}{n}}
 
 where :math:`D` is the diffusion coefficient, :math:`t` is the
 simulation time, and :math:`n` is the number of molecules. This equation
@@ -1289,7 +1285,9 @@ displacements is a matrix quantity which gives the variance on each pair
 of axes of the distribution of positions, shown in the third panel. For
 example, the variance matrix element for axes :math:`x` and :math:`y` is
 
-.. math::  v_{xy} = \frac{1}{n} \sum_{i=1}-{n}(x_i-\bar{x})(y_i-\bar{y})
+.. math::
+
+   v_{xy} = \frac{1}{n} \sum_{i=1}-{n}(x_i-\bar{x})(y_i-\bar{y})
 
 The overbars indicate mean values for the distribution. Because diffusion on
 different axes is independent, the off-diagonal variances (*vxy*, *vxz*, and
@@ -1297,7 +1295,9 @@ different axes is independent, the off-diagonal variances (*vxy*, *vxz*, and
 the figure. The diagonal variances (*vxx*, *vyy*, and *vzz*) are each expected
 to increase as approximately
 
-.. math:: v_{xx} ≈ v_{yy} ≈ v_{zz} ≈ 2Dt
+.. math:: 
+
+   v_{xx} ≈ v_{yy} ≈ v_{zz} ≈ 2Dt
 
 Again, this is seen in the figure. Similar figures for the green and blue
 molecules, which are not presented, showed similarly good agreement between the
@@ -1306,7 +1306,9 @@ simulation data and theory.
 Anisotropic diffusion was investigated with the example file ``diffa.txt``.  In
 this case, the diffusion equation is
 
-.. math::  \dot{u} = ∇ \dot D∇ u
+.. math::  
+
+   \dot{u} = ∇ \dot D∇ u
 
 Here, :math:`u` can be interpreted as either the probability density for a
 single molecule or as the concentration of a macroscopic collection of
@@ -2455,7 +2457,9 @@ have contacted the surface at some point during the time step, labeled
 here as an indirect collision. The probability of an indirect collision
 occurring is (Andrews and Bray, *Phys. Biol.* 2004)
 
-.. math::  \exp\left(-\frac{l_1l_2}{DΔt}\right) 
+.. math::  
+
+   \exp\left(-\frac{l_1l_2}{DΔt}\right) 
 
 Here, *l*\ 1 and *l*\ 2 are the perpendicular distances to the surface
 before and after the time step, *D* is the diffusion coefficient, and
@@ -2488,7 +2492,9 @@ surface area. If the surface is in equilibrium with the solution, where
 there is a sticking coefficient of *κ*, and an unsticking rate of *k*,
 then the equilibrium surface density of molecules is
 
-.. math::  C_{surface} = \frac{κ}{k}C_{solution}
+.. math:: 
+
+   C_{surface} = \frac{κ}{k}C_{solution}
 
 Surface sticking rates were tested with the example file stickrate.txt.
 Here, a collection of molecules diffuses freely in solution, but sticks
@@ -2522,7 +2528,9 @@ functions of time. The theoretical concentration distributions for these
 situations is expressed with a slight extension of eq. 3.5b from Crank,
 which leads to
 
-.. math:: C(r) = \sum_i \frac{q_i}{4π D|r-r_i|}\erfc{\frac{|r-r_i|}{2√{Dt}}}
+.. math:: 
+
+   C(r) = \sum_i \frac{q_i}{4π D|r-r_i|}\erfc{\frac{|r-r_i|}{2√{Dt}}}
 
 Here, *C*\ (**r**) is the concentration at position **r**, *qi* is the
 emission rate of source *i*, *D* is the diffusion coefficient,
@@ -2530,7 +2538,9 @@ emission rate of source *i*, *D* is the diffusion coefficient,
 sources started emitting. At steady-state, this concentration equation
 simplifies to
 
-.. math:: C(r) = \sum_i\frac{q_i}{4π D$r-r_i|}
+.. math:: 
+
+   C(r) = \sum_i\frac{q_i}{4π D$r-r_i|}
 
 The figure below shows results from the emitter1.txt Smoldyn simulation, in
 which an emitter at location **r**\ 1 = (-4.5,0,0) micron emits *q*\ 1 = 500
@@ -2803,13 +2813,17 @@ be particularly useful.
 The zeroth order reaction 0 → A proceeds according to the mass action
 rate equation
 
-.. math:: \frac{d[A]}{dt} = k
+.. math::
+
+   \frac{d[A]}{dt} = k
 
 :math:`k` is the reaction rate constant. Solving for the number of A
 molecules in volume :math:`V` as a function of time yields the
 deterministic solution
 
-.. math::  n(t)=n(0)+kt
+.. math:: 
+
+   n(t)=n(0)+kt
 
 :math:`n(0)` and :math:`n(t)` are the initial and time dependent numbers
 of :math:`A` molecules. There are also fluctuations due to the
@@ -2887,31 +2901,37 @@ configuration file is
 The system is started with only A molecules, so the theoretical number
 of A molecules as a function of time is
 
-.. math:: n_A(t)=n_A(0)e"{"(k_B+k_C+k_D)t}
+.. math:: 
+
+   n_A(t)=n_A(0)e^{-(k_B+k_C+k_D)t}
 
 The number of B molecules as a function of time is
 
-.. math:: n_B(t)=n_A(0)\frac{k_B}{k_B+k_C+k_D}\left[1-e"{"(k_B+k_C+k_D)t}\right]
+.. math:: 
+
+   n_B(t)=n_A(0)\frac{k_B}{k_B+k_C+k_D}\left[1-e^{-(k_B+k_C+k_D)t}\right]
 
 Analogous equations hold for C and D. Simulation results closely matched
 these theoretical equations, as shown in the figure below.
 
-|image15|\ {: style=“width:300px”} |image16|\ {: style=“width:300px”}
+|image15| |image16|
 
 The panel on the left shows results from the configuration file
-unireact1.txt. First order reactions occur at rates that are in good
+``unireact1.txt``. First order reactions occur at rates that are in good
 agreement with theory over a wide range of rate values. The panel on the
-right shows results from the file unireactn.txt. Again, there is good
+right shows results from the file ``unireactn.txt``. Again, there is good
 agreement with theory.
 
 Bimolecular reactions
--------------------------------
+---------------------
 
 Bimolecular reactions have the generic reaction equation A + B → C, for
 which the mass action kinetics are described by the deterministic
 differential equations
 
-.. math:: \frac{d[A]}{dt}=\frac{d[B]}{dt}="\frac{d[C]}{dt}=-k[A][B]
+.. math:: 
+
+   \frac{d[A]}{dt}=\frac{d[B]}{dt}=-\frac{d[C]}{dt}=-k[A][B]
 
 The reaction rate constant, *k*, is only actually constant if: (*i*) the
 reaction kinetics are purely activation-limited, or (*ii*) the reaction
@@ -2923,13 +2943,15 @@ the condition that there are the same numbers of A and B molecules
 initially, the solution for the number of A molecules (or B molecules)
 as a function of time is
 
-.. math:: n(t)=\left( \frac{1}{n(0)}+\frac{kt}{V}\right)"{-1}
+.. math:: 
 
-As before, *n*\ (0) is the initial number of A or B molecules,
-*n*\ (*t*) is the number of A or B molecules as a function of time, *k*
-is the reaction rate constant and *V* is the volume of the system. This
-was tested with three different reaction rates with the configuration
-file reactAB.txt, for which the reaction portion of the file is
+   n(t)=\left(\frac{1}{n(0)}+\frac{kt}{V}\right)^{-1}
+
+As before, :math:`n_(0)` is the initial number of A or B molecules,
+:math:`n_(t)` is the number of A or B molecules as a function of time, *k* is
+the reaction rate constant and *V* is the volume of the system. This was tested
+with three different reaction rates with the configuration file
+``reactAB.txt``, for which the reaction portion of the file is
 
 ::
 
@@ -2959,7 +2981,7 @@ passed for a steady state reactant distribution to be formed, it is
 shown that the simulated results agree well with the analytical results
 (orange line in the figure).
 
-|image17|\ {: style=“width:300px”} |image18|\ {: style=“width:300px”}
+|image17| |image18|
 
 The panel on the left shows reactant numbers for the reaction A + B → C
 for three different reaction rates and with equal initial numbers of A
@@ -2988,10 +3010,12 @@ collisions, Smoldyn uses a larger binding radius for the former.
 The analytical solution for the number of A molecules as a function of
 time is also slightly different from before,
 
-.. math:: n(t)=\left( \frac{1}{n(0)}+\frac{2kt}{V}\right)"{-1}
+.. math:: 
+
+   n(t)=\left( \frac{1}{n(0)}+\frac{2kt}{V}\right)^{-1}
 
 The reaction description portion of the configuration file
-S8_reactions/bireactAA.txt is
+``S8_reactions/bireactAA.txt`` is
 
 ::
 
@@ -3019,10 +3043,10 @@ is sufficiently short that the reaction simulates as though it is
 diffusion-limited. As is shown in the figure below, results conform
 closely to the Smoluchowski prediction for this reaction.
 
-|image19|\ {: style=“width:300px”} |image20|\ {: style=“width:300px”}
+|image19|  |image20|
 
 This example shows diffusion-limited bimolecular reactions from the
-configuration file bireactABB.txt, which simulates the reaction that is
+configuration file ``bireactABB.txt``, which simulates the reaction that is
 described in Figure 7 of Andrews and Bray, 2004. The left panel shows
 the number of surviving A molecules as a function of time with
 comparison to the time-dependent Smoluchowski equation. The right panel
@@ -3031,32 +3055,35 @@ time along with the Smoluchowski prediction with the solid black line
 and predicted fluctuations with the dashed lines.
 
 Reversible reactions
--------------------------------
+----------------------
 
 Reversible reactions, where at least one has multiple products, involve
-geminate recombination issues, as discussed below. The accuracy of
-reversible reaction rates using the default reverse parameter type and
-parameter was investigated with the configuration file
-S8_reactions/equil/equil.txt. Here, an equilibrium is set up for the
-reaction A + B ↔ C.
+geminate recombination issues, as discussed below. The accuracy of reversible
+reaction rates using the default reverse parameter type and parameter was
+investigated with the configuration file ``S8_reactions/equil/equil.txt``.
+Here, an equilibrium is set up for the reaction ``A + B ↔ C``.
 
 From standard chemistry, the equilibrium constant is related to the
 ratio of product to reactant concentrations and to the ratio of the
 forward to reverse rate constants,
 
-.. math:: K = \frac{n_C V}{n_A n_B}=\frac{k_f}{k_r}
+.. math:: 
+
+   K = \frac{n_C V}{n_A n_B}=\frac{k_f}{k_r}
 
 :math:`V` is the total system volume. The configuration file
 ``equil.txt`` starts with equal numbers of A and B molecules and no C
 molecules. Using the above equation and this starting point, the
 solution for the equilibrium number of A molecules is
 
-.. math:: n_A = \frac{-V+ \sqrt{V-2+4Kn_A(0)V}}{2K}
+.. math:: 
+
+   n_A = \frac{-V+ \sqrt{V-2+4Kn_A(0)V}}{2K}
 
 :math:`n_A(0)` is the initial number of A molecules. It was verified
 that the simulation result approached this value.
 
-|image21|\ {: style=“width:300px”}
+|image21|
 
 This figure shows the equilibrium result from example file
 ``S8_reactions/equil/equil.txt``.
@@ -3075,23 +3102,29 @@ explicitly define each of the steps.
 Taking the Michaelis-Menten reaction as an example, consider substrate
 S, enzyme E, and product P. The full reaction system is
 
-.. math::  E+S\xrightleftharpoons[k_{-1}]{k_1} ES \xrightarrow{k_2} P
+.. math::  
 
-All three of these reactions, along with the enzyme-substrate complex
-ES, need to be defined in a Smoldyn file. Of course, this means that you
-also need to give the three reaction rate constants *k*\ 1, *k*\ -1, and
-*k*\ 2. Assume you know the Michaelis constant *KM* and the maximum
-reaction velocity *Vmax*. As can be found in any biochemistry textbook,
-these are connected to the underlying rate constants as
+   E+S\xrightleftharpoons[k_{-1}]{k_1} ES \xrightarrow{k_2} P
 
-.. math:: K_M=\frac{k_{-1}+k_2}{k_1}, \quad V_{max}=k_2[E]_0
+All three of these reactions, along with the enzyme-substrate complex ES, need
+to be defined in a Smoldyn file. Of course, this means that you also need to
+give the three reaction rate constants :math:`k_1`, :math:`k_1`, and
+:math:`k_2`. Assume you know the Michaelis constant *KM* and the maximum
+reaction velocity *Vmax*. As can be found in any biochemistry textbook, these
+are connected to the underlying rate constants as
+
+.. math::
+
+   K_M=\frac{k_{-1}+k_2}{k_1}, \quad V_{max}=k_2[E]_0
 
 where [E]0 is the total enzyme concentration. These two equations are
 not sufficient to solve for the three rate constants, so let us define
 the unitless reaction efficiency ratio, *r*, as the fraction of ES that
 goes to P,
 
-.. math:: r=\frac{k_2}{k_{-1}+k_2}
+.. math::
+
+   r=\frac{k_2}{k_{-1}+k_2}
 
 This value can range between 0 and 1, where small values represent rapid
 equilibration between E, S, and ES, and high values represent rapid
@@ -3099,7 +3132,9 @@ reaction of ES to P. Typical Michaelis-Menten analyses assume the former
 situation, so we might guess that *r* is 0.1. Solving these equations
 for the reaction rate constant yield:
 
-.. math:: k_1=\frac{V_{max}}{[E]_0K_Mr}, \quad k_{n1}=\frac{V_{max}(1-r)}{[E]_0r}, \quad k_2=\frac{V_{max}}{[E]_0}
+.. math::
+
+   k_1=\frac{V_{max}}{[E]_0K_Mr}, \quad k_{n1}=\frac{V_{max}(1-r)}{[E]_0r}, \quad k_2=\frac{V_{max}}{[E]_0}
 
 Other multi-step reactions can be broken down to elementary reactions in
 a similar manner. The need to include additional assumptions, as we did
@@ -3117,7 +3152,7 @@ in ecological predator-prey systems but is also analogous to many
 natural biochemical oscillators. The terminology used here borrows from
 the ecology application, although all numbers were chosen solely to make
 for an interesting simulation result. The complete file
-S8_reactions/lotvolt/lotvolt.txt is:
+``S8_reactions/lotvolt/lotvolt.txt`` is:
 
 ::
 
@@ -3158,8 +3193,7 @@ simulation is set up with only 1 molecule per virtual box, and the
 rabbit and fox molecules are stored in separate molecule lists. Results
 from this file are shown in the figure below.
 
-|image22|\ {: style=“width:300px”} |image23|\ {: style=“width:300px”}
-|image24|\ {: style=“width:300px”}
+|image22| |image23| |image24|
 
 These figures show results from Lotka-Volterra simulation. The first
 panel shows of snapshot of the simulation after it has run for long
@@ -3265,7 +3299,7 @@ conformational spread reaction rates that were observed to be slightly
 too low for the case in which each red molecule was within the
 conformational spread radius of two blue molecules.
 
-|image25|\ {: style=“width:300px”} |image26|\ {: style=“width:300px”}
+|image25| |image26|
 
 This figure show output from confspread.txt configuration file. There
 are conformational spread reactions between blue molecules and red
@@ -3325,7 +3359,7 @@ are:
 A second example involves a crowded system and is in the same directory
 and the file crowding.txt.
 
-|image27|\ {: style=“width:300px”} |image28|\ {: style=“width:300px”}
+|image27| |image28|
 
 These figures show output from bounce.txt and crowding.txt. In the
 former, red and green molecules, both of which are confined to the
@@ -3589,7 +3623,9 @@ boundary conditions that the RDF approaches 1 for large distances and is
 ``Stochastic simulation of chemical reactions with spatial resolution and single molecule detail``).
 This leads to the Smoluchowski rate equation
 
-.. math::  k = 4π D σ_b
+.. math:: 
+
+   k = 4π D σ_b
 
 However, for an A molecule that is near a surface, an additional
 boundary condition is that the gradient of the 3 dimensional RDF in a
@@ -3618,7 +3654,9 @@ binding surface is exposed to the system. Thus, the diffusion limited
 reaction rate for the situation in which a reactant is fixed exactly at
 a surface is
 
-.. math:: k=2π Dσ_b
+.. math:: 
+
+   k=2π Dσ_b
 
 The situation changes some when simulation time steps are sufficiently
 long that rms step lengths are much longer than binding radii. Now, the
@@ -3751,7 +3789,7 @@ These files are in the examples folder in ``S9_compartments``. The first
 is called ``compart.txt`` and the second is ``compartlogic.txt``. They
 yield the following results:
 
-|image29|\ {: style=“width:300px”} |image30|\ {: style=“width:300px”}
+|image29| |image30|
 
 This figure shows examples of compartments. In the left panel, green
 dots are the interior-defining points and red molecules were added
@@ -4500,7 +4538,9 @@ similar densities. From these assumptions, the radius of a complex is
 the cube root of the sum of the cubes of the monomer radii. Based on
 this, Smoldyn assigns a species display size as
 
-.. math:: S_{species} = \left( \sum_i S_i-3 \right)"{\frac{1}{3}}
+.. math:: 
+
+   S_{species} = \left( \sum_i S_i-3 \right)^{\frac{1}{3}}
 
 where S\ :sub:`i` is the display size of the i’th monomer. Smoldyn also
 assumes that the diffusion coefficient scales as the inverse of the
@@ -4511,7 +4551,9 @@ where :math:`D_i` is the diffusion coefficient of the i’th monomer.
 Smoldyn computes colors for species by computing the arithmetic average
 of the red, green, and blue color values for each of the monomers.
 
-.. math:: D_{species}=\left(\sum_i D_i"{-3} \right)"{-1/3}
+.. math:: 
+
+   D_{species}=\left(\sum_i D_i^{-3} \right)^{-1/3}
 
 Surface-molecule interactions
 -------------------------------
