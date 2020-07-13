@@ -58,7 +58,7 @@ add_custom_command(OUTPUT ${SPHINX_INDEX_FILE}
 
 # Generate doc using Sphinx and doxygen.
 add_custom_target(docs ALL 
-    COMMAND READTHEDOCS=True ${SPHINX_EXECUTABLE} -b html 
+    COMMAND READTHEDOCS=True ${SPHINX_EXECUTABLE} -b html
         ${SPHINX_SOURCE} ${SPHINX_BUILD}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Generating documentation with Sphinx and doxygen")

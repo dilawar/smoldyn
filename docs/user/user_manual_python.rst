@@ -23,33 +23,20 @@ methods that are more computationally efficient but less accurate are likely to
 be preferable.
 
 There are two ways to use Smoldyn simulator. First, as a standalone command
-line program which reads a plain text configuration file (see :ref:`user_manual:User Manual`),
-and second, as a Python language library or an extension module. The later is
-added recently and covers all features of Smoldyn. Python provides expressive
-syntax, easy control over the simulation environment, and also brings its whole
-scientific and engineering ecosystem to Smoldyn users. This manual is a
-modified from :ref:`user_manual:User Manual` for Python users.
-
-.. tikz:: Smoldyn can be used as astandalone executable or as a Python extension.
-
-    \tikzstyle{mystyle}=[text width=5cm, align=center, inner sep=5mm, rounded corners, fill=blue!30]
-    \node[mystyle, text width=6cm] (struct) {\Large Internal datastructure};
-    \node[mystyle, above left=5cm of struct, anchor=west] (config) {\Large Configuration file};
-    \node[mystyle, above right=5cm of struct, anchor=east] (python) {\Large Python code};
-    \node[mystyle, below=2cm of struct] (data) {\Large Simualtion data};
-
-    % arrows
-    \draw[-Latex] (config) to[] node[sloped, above]{Smoldyn parser} (struct);
-    \draw[-Latex] (python) to[] node[sloped, above]{Python interpreter} (struct);
-    \draw[-Latex] (struct) to[] node[above, sloped] {Simulate} (data);
+line program which reads a plain text configuration file (see
+:doc:`user_manual`), and second, as a Python language library or an extension
+module. The later is added recently and covers all features of Smoldyn. Python
+provides expressive syntax, easy control over the simulation environment, and
+also brings its whole scientific and engineering ecosystem to Smoldyn users.
+This manual is a modified from :doc:`user_manual` for Python users.
 
 As a Python extension module, the input to Smoldyn is a Python program. Two
 levels of APIs are available to Python users. First one is the low level API
-which is essentially the C API described in `Library libsmoldyn`_ exposed to
-Python using excellent Pybind11 library. This API is meant for developers.
-Second is a high level API described in `Python API`. It is recommended for
-Smoldyn users. The high level API is written in terms of the low-level API for
-easier use and better error handling.
+which is essentially the C API described in :doc:`../developer/libsmoldyn`
+exposed to Python using excellent Pybind11 library. This API is meant for
+developers.  Second is a high level API described in :doc:`../python/api`. It
+is recommended for Smoldyn users. The high level API is written in terms of the
+low-level API for easier use and better error handling.
 
 The Python program specifies all of the details of the system, such as the
 shapes and positions of membranes, the initial types and locations of
@@ -66,12 +53,12 @@ to text files.
 **About this User’s Manual**
 
 Do not read the manual from end to end. New users should read the
-:ref:`Installing Smoldyn` chapter as needed and the :ref:`Getting Started`
-chapter. The last half of the manual is a reference section which lists all
-statements and commands.  The first portions of the other chapters provide
-helpful introductions on additional topics.  Later portions of those chapters
-present advanced material that you may want to learn if you continue with
-Smoldyn.
+:ref:`Installing Smoldyn <user-manual>` chapter as needed and the
+:ref:`<user_manual:Getting Started>` chapter. The last half of the manual is a
+reference section which lists all statements and commands.  The first portions
+of the other chapters provide helpful introductions on additional topics.
+Later portions of those chapters present advanced material that you may want to
+learn if you continue with Smoldyn.
 
 Installing Smoldyn (Python extension)
 -------------------------------------
@@ -1582,7 +1569,7 @@ surface as though it is shiny.
 Within each surface block, you can set the shininess of the surface with
 the shininess statement.
 
-Runtime commands
+Runtime Commands
 ================
 
 Command basics
@@ -6589,8 +6576,9 @@ Functions of two variables
 -  ``pow(x, y)``
 -  ``rand(x, y)``
 
-Runtime Commands
-================
+
+Runtime commands overview
+=========================
 
 Simulation control commands
 ---------------------------
@@ -7313,13 +7301,12 @@ to *num* if *num* is a non-integer.
    gaussiansource *species num mean<sub>x</sub> sigma<sub>x</sub> mean<sub>y</sub> sigma<sub>y</sub>*
    gaussiansource *species num mean<sub>x</sub> sigma<sub>x</sub> mean<sub>y</sub> sigma<sub>y</sub> mean<sub>z</sub> sigma<sub>z</sub>*
 
-Creates *num* new molecules of type *species* with a Gaussian
-distribution centered at mean and with standard deviation sigma on each
-axis. Molecules are not placed beyond the system boundaries; any
-attempted placements are rejected and sampled again. Molecule states are
-set to solution. This creates exactly *num* molecules if *num* is an
-integer and a Poisson-distributed random number of molecules with
-expected value equal to *num* if *num* is a non-integer.
+Creates *num* new molecules of type *species* with a Gaussian distribution
+centered at mean and with standard deviation sigma on each axis. Molecules are
+not placed beyond the system boundaries; any attempted placements are rejected
+and sampled again. Molecule states are set to solution. This creates exactly
+*num* molecules if *num* is an integer and a Poisson-distributed random number
+of molecules with expected value equal to *num* if *num* is a non-integer.
 
 ::
 
@@ -7327,15 +7314,14 @@ expected value equal to *num* if *num* is a non-integer.
    surface*<sub>1</sub>:*panel*<sub>1</sub>
    *surface*<sub>2</sub>:*panel*<sub>2</sub> \[*state*<sub>2</sub>\]
 
-Moves molecules of type *species* and state *state*, and which are bound
-to *panel*\ 1 of *surface*\ 1, to *panel*\ 2 of *surface*\ 2 with
-probability *prob*. If entered, the new molecular state becomes
-*state*\ 2, which may be any state including fsoln or bsoln; otherwise
-the molecule state is unchanged. The new molecule location is at a
-random location on *panel*\ 2 (which contrasts the behavior of the jump
-statement). Either or both of *panel*\ 1 and *panel*\ 2 can be ``all``
-for all panels of the respective surface. Also, the *species* and/or the
-*state* may be ``all``.
+Moves molecules of type *species* and state *state*, and which are bound to
+*panel*\ 1 of *surface*\ 1, to *panel*\ 2 of *surface*\ 2 with probability
+*prob*. If entered, the new molecular state becomes *state*\ 2, which may be
+any state including fsoln or bsoln; otherwise the molecule state is unchanged.
+The new molecule location is at a random location on *panel*\ 2 (which
+contrasts the behavior of the jump statement). Either or both of *panel*\ 1 and
+*panel*\ 2 can be ``all`` for all panels of the respective surface. Also, the
+*species* and/or the *state* may be ``all``.
 
 ::
 

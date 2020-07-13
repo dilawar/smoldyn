@@ -35,9 +35,9 @@ extensions = [
     "sphinx.ext.imgmath",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "sphinx.ext.autosectionlabel",
     "sphinxcontrib.programoutput",
-    "sphinxcontrib.plantuml",
+    "sphinxcontrib.inlinesyntaxhighlight",
+    "sphinx.ext.autosectionlabel",
     "sphinxcontrib.tikz",
     "sphinx.ext.todo",
     "sphinx_rtd_theme",
@@ -47,7 +47,12 @@ extensions = [
     "sphinx.ext.autosummary",
 ]
 
+latex_engine = "xelatex"
+imgmath_latex = 'xelatex'
+
 autosectionlabel_prefix_document = True
+autosectionlabel_maxdepth = 2
+
 autoclass_content = "both"
 autodoc_default_options = {
     "member-order": "bysource",

@@ -48,7 +48,7 @@ introductions on additional topics.  Later portions of those chapters present
 advanced material that you may want to learn if you continue with Smoldyn.
 
 Installing Smoldyn
--------------------
+------------------
 
 Macintosh
 ^^^^^^^^^
@@ -67,10 +67,7 @@ Macintosh
    correctly.
 5. Test Smoldyn by typing ``smoldyn examples/S1\_intro/bounce3.txt``.
 
-.. note:: 
-
-   If installation failed
-   ----------------------
+.. note:: If installation failed
 
    Type ``smoldyn -V``. This should run Smoldyn just enough to print out the
    version number. If this works, then you have Smoldyn and it runs, but
