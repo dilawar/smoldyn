@@ -23,22 +23,22 @@ void ChangeSize(int w, int h);
 void KeyPush(unsigned char key, int x, int y);
 void SpecialKeyPush2(unsigned char key, int x, int y);
 void SpecialKeyPush(int key, int x, int y);
-int  WriteTIFF(const char *filename, const char *description, int x, int y, int width,
-     int height, int compression);
+int WriteTIFF(const char *filename, const char *description, int x, int y, int width,
+    int height, int compression);
 
 GLfloat ClipSize, ClipMidx, ClipMidy, ClipMidz;
 GLfloat ClipLeft, ClipRight, ClipBot, ClipTop, ClipBack, ClipFront;
 GLfloat FieldOfView, Near, Aspect, Zoom;
 GLfloat PixWide, PixHigh;
-int     Gl2PauseState, Dimension;
+int Gl2PauseState, Dimension;
 GLfloat Xtrans, Ytrans;
-char    TiffName[STRCHAR] = TiffNameDefault;
-int     Fix2DAspect       = Fix2DAspectDefault;
-int     TiffNumber        = TiffNumberDefault;
-int     TiffNumMax        = TiffNumMaxDefault;
-GLfloat RotateAngle       = RotateAngleDefault;
-void (*FreeFunc)(void *)  = NULL;
-void *FreePointer         = NULL;
+char TiffName[STRCHAR]   = TiffNameDefault;
+int Fix2DAspect          = Fix2DAspectDefault;
+int TiffNumber           = TiffNumberDefault;
+int TiffNumMax           = TiffNumMaxDefault;
+GLfloat RotateAngle      = RotateAngleDefault;
+void (*FreeFunc)(void *) = NULL;
+void *FreePointer        = NULL;
 
 /* ***************************************** */
 /* ************* Local functions *********** */
@@ -103,10 +103,10 @@ void ChangeSize(int w, int h)
 void KeyPush(unsigned char key, int x, int y)
 {
 #ifdef __gl_h_
-    GLint            viewport[4], w, h;
+    GLint viewport[4], w, h;
     constexpr size_t _STRCHAR = STRCHAR + 128;
-    char             name[_STRCHAR], str[_STRCHAR];
-    GLfloat          clipheight, clipwidth;
+    char name[_STRCHAR], str[_STRCHAR];
+    GLfloat clipheight, clipwidth;
 
     x = y = 0;  // to avoid compiler warnings
     glMatrixMode(GL_MODELVIEW);
@@ -230,7 +230,7 @@ void SpecialKeyPush2(unsigned char key, int x, int y)
 {
 #ifdef __gl_h_
     GLfloat m[16];
-    GLint   viewport[4], w, h;
+    GLint viewport[4], w, h;
     GLfloat clipheight, clipwidth;
 
     x = y = 0;  // to avoid compiler warnings
@@ -344,9 +344,9 @@ int WriteTIFF(const char *filename, const char *description, int x, int y, int w
     int height, int compression)
 {
 #if defined _TIFFIO_ && defined __gl_h_
-    TIFF *   file;
+    TIFF *file;
     GLubyte *image, *p;
-    int      i;
+    int i;
 
     if(compression == -1)
         compression = COMPRESSION_PACKBITS;
@@ -402,6 +402,9 @@ GLfloat *gl2Double2GLfloat(double *input, GLfloat *output, int n)
 void gl2Initialize(
     char *wname, float xlo, float xhi, float ylo, float yhi, float zlo, float zhi)
 {
+    static int glutInit_ = 0;
+    if(glutInit_)
+        return;
 #ifdef __gl_h_
     if(ylo == yhi && zlo == zhi)
         Dimension = 1;
@@ -459,6 +462,7 @@ void gl2Initialize(
     if(Dimension == 3) {
         glEnable(GL_DEPTH_TEST);
     }
+    glutInit_ = true;
 #endif
     return;
 }
@@ -467,9 +471,9 @@ void gl2Initialize(
 void gl2glutInit(int *argc, char **argv)
 {
 #ifdef __gl_h_
-    static int done     = 0;
-    int        defaultc = 1;
-    char **    defaultv;
+    static int done = 0;
+    int defaultc    = 1;
+    char **defaultv;
 
     if(done)
         return;
@@ -927,7 +931,7 @@ void gl2DrawGrid(float *pt1, float *pt2, int *n, int dim)
 {
 #ifdef __gl_h_
     float delta1, delta2;
-    int   i, j;
+    int i, j;
 
     if(dim == 1) {
         glBegin(GL_POINTS);
@@ -984,7 +988,7 @@ void gl2DrawGridD(double *pt1, double *pt2, int *n, int dim)
 {
 #ifdef __gl_h_
     double delta1, delta2;
-    int    i, j;
+    int i, j;
 
     if(dim == 1) {
         glBegin(GL_POINTS);
@@ -1040,7 +1044,7 @@ void gl2DrawGridD(double *pt1, double *pt2, int *n, int dim)
 void gl2DrawCircle(float *cent, float radius, int slices, char style, int dim)
 {
 #ifdef __gl_h_
-    int   i;
+    int i;
     float theta, dtheta;
 
     if(style == 'g') {
@@ -1092,7 +1096,7 @@ void gl2DrawCircle(float *cent, float radius, int slices, char style, int dim)
 void gl2DrawCircleD(double *cent, double radius, int slices, char style, int dim)
 {
 #ifdef __gl_h_
-    int    i;
+    int i;
     double theta, dtheta;
 
     if(style == 'g') {
@@ -1144,7 +1148,7 @@ void gl2DrawArc(float *cent, float radius, float theta1, float theta2, int slice
     char style, int dim)
 {
 #ifdef __gl_h_
-    int   i, imax;
+    int i, imax;
     float theta, dtheta;
 
     dtheta = 2.0 * PI / slices;
@@ -1184,7 +1188,7 @@ void gl2DrawArcD(double *cent, double radius, double theta1, double theta2, int 
     char style, int dim)
 {
 #ifdef __gl_h_
-    int    i, imax;
+    int i, imax;
     double theta, dtheta;
 
     dtheta = 2.0 * PI / slices;
@@ -1223,7 +1227,7 @@ void gl2DrawArcD(double *cent, double radius, double theta1, double theta2, int 
 void gl2DrawHemisphere(float radius, int slices, int stacks, int frontin, int normals)
 {
 #ifdef __gl_h_
-    int   ilong, ilat, ilong1, ilong2, dilong;
+    int ilong, ilat, ilong1, ilong2, dilong;
     float dtheta, dphi, r1, r2, z1, z2, cosphi, sinphi, normfact;
 
     if(frontin) {
@@ -1301,7 +1305,7 @@ void gl2DrawCylinder(float baseRadius, float topRadius, float height, int slices
     int stacks, int frontin, int normals)
 {
 #ifdef __gl_h_
-    int   ilen, irad, irad1, irad2, dirad;
+    int ilen, irad, irad1, irad2, dirad;
     float dtheta, dlen, z1, z2, r1, r2, costheta, sintheta, normxy, normz;
 
     if(frontin) {
@@ -1589,7 +1593,7 @@ void gl2PlotSurf(
     float *xdata, float *ydata, float **zdata, int nx, int ny, int nz, char *style)
 {
 #ifdef __gl_h_
-    int   ix, iy, iz, ic;
+    int ix, iy, iz, ic;
     float dxlo, dxhi, dylo, dyhi;
     float col1[64][4], col2[4];
 

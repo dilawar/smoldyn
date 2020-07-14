@@ -48,9 +48,9 @@ int LibThrowThreshold          = 11;
 
 /* --------------------------------------------------------------------------*/
 /**
- * @Synopsis Returns the smoldyn's version. 
+ * @Synopsis Returns the smoldyn's version.
  *
- * @Returns   
+ * @Returns
  */
 /* ----------------------------------------------------------------------------*/
 extern "C" double smolGetVersion(void)
@@ -569,6 +569,11 @@ failure:
 /******************************************************************************/
 /********************************** Graphics **********************************/
 /******************************************************************************/
+extern "C" enum ErrorCode smolSetGlutWindow(simptr sim, const size_t window)
+{
+    const char *funcname = "smolSetGlutWindow";
+    int er;
+}
 
 /* smolSetGraphicsParams */
 extern "C" enum ErrorCode smolSetGraphicsParams(
@@ -1282,12 +1287,11 @@ extern "C" enum ErrorCode smolSetMoleculeColor(
 
     for(c = 0; c < 3; c++)
         LCHECK(color[c] >= 0 && color[c] <= 1, funcname, ECbounds,
-                "color value out of bounds");
+            "color value out of bounds");
     molsetcolor(sim, i, NULL, state, color);
     return ECok;
 failure:
     return Liberrorcode;
-
 }
 
 extern "C" enum ErrorCode smolSetMoleculeSize(
@@ -1311,7 +1315,6 @@ extern "C" enum ErrorCode smolSetMoleculeSize(
 failure:
     return Liberrorcode;
 }
-
 
 /* smolSetMoleculeStyle */
 extern "C" enum ErrorCode smolSetMoleculeStyle(

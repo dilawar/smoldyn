@@ -8,6 +8,21 @@ __copyright__ = "Copyright 2020-, Dilawar Singh"
 __maintainer__ = "Dilawar Singh"
 __email__ = "dilawars@ncbs.res.in"
 
+# Import GLUT if available.
+__glut_found__ = False
+__glutWindow__ = None
+try:
+    import OpenGL.GL
+    import OpenGL.GLUT
+    import OpenGL.GLU
+
+    __glut_found__ = True
+    OpenGL.GLUT.glutInit()
+    __glutWindow__ = OpenGL.GLUT.glutCreateWindow("smoldyn")
+except ImportError:
+    print("[INFO] PyOpenGL is not loaded." " Some functionality will not be available.")
+    pass
+
 __all__ = [
     "__version__",
     "version",
@@ -961,6 +976,7 @@ class Boundaries:
     dim: int = 0
 
     def __post_init__(self):
+        global __glutWindow__
         assert len(self.low) == len(self.high), "Size mismatch."
         if len(self.types) == 1:
             self.types = self.types * len(self.low)
@@ -971,6 +987,10 @@ class Boundaries:
         for _d, _t in zip(range(self.dim), self.types):
             k = _smoldyn.setBoundaryType(_d, -1, _t)
             assert k == _smoldyn.ErrorCode.ok, f"Failed to set boundary type: {k}"
+
+        if __glutWindow__:
+            k = _smoldyn.setGlutWindow(__glutWindow__)
+            assert k == _smoldyn.ErrorCode.ok, "Failed to set window"
 
 
 @dataclass
@@ -1195,7 +1215,10 @@ class Simulation(object):
             self.accuracry: float = kwargs["accuracy"]
 
         if self.kwargs.get("output_files", []):
-            self.setOutputFiles(self.kwargs["output_files"])
+            outfiles = self.kwargs["output_files"]
+            if isinstance(outfiles, str):
+                outfiles = [outfiles]
+            self.setOutputFiles(outfiles)
 
         # TODO : Add to documentation.
         self.quitAtEnd = quit_at_end
@@ -1288,6 +1311,8 @@ class Simulation(object):
             List of variables to be displayed. Or a text string containing
             variable names e.g. 'time E S ES(front)'
         """
+        k = _smoldyn.setGraphicsParams(method, iter, delay)
+        assert k == _smoldyn.ErrorCode.ok
         k = _smoldyn.setGraphicsParams(method, iter, delay)
         assert k == _smoldyn.ErrorCode.ok
         k = _smoldyn.setBackgroundStyle(bg_color)

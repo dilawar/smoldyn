@@ -385,7 +385,7 @@ typedef struct rulesuperstruct {
 
 enum PanelFace { PFfront, PFback, PFnone, PFboth };
 
-constexpr int PSMAX=6; // maximum number of panel shapes
+constexpr int PSMAX = 6;  // maximum number of panel shapes
 enum PanelShape { PSrect, PStri, PSsph, PScyl, PShemi, PSdisk, PSall, PSnone };
 
 constexpr std::array<PanelShape, 6> AllPanels_arr{PanelShape::PSrect, PanelShape::PStri,

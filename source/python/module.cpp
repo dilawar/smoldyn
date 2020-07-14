@@ -456,6 +456,13 @@ PYBIND11_MODULE(_smoldyn, m)
     /*********************************
      *  Graphics related functions.  *
      *********************************/
+    m.def("setGlutWindow", [](const int window) {
+        cerr << "Python GLUT widnow " << window << endl;
+        auto er = graphicsupdate(cursim_);
+        er = simUpdateAndDisplay(cursim_);
+        return ErrorCode::ECok;
+    });
+
     // enum ErrorCode smolSetGraphicsParams(simptr sim, const char *method, int
     // timesteps, int delay);
     m.def(
