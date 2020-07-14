@@ -227,12 +227,11 @@ showing that it extends from -1 to 1 on the x axis, and then the same on the y
 axis.  Smoldyn still tracks any molecules beyond these boundaries but it
 becomes less efficient if there are substantial dynamics there. 
 
-Simulations (usually the last step, see :py:class:`.smoldyn.Simulation`) use
-fixed time steps. They start at the time given with ``start``, stop at the time
-given with ``stop`` and have steps with the size given with ``step``. For
-typical simulations of subcellular processes, 10 ms is often a reasonable time
-step. Longer time steps make the simulation run faster and shorter time steps
-produce more accurate results.
+Simulations (:py:class:`.smoldyn.Simulation`) use fixed time steps. They start
+at the time given with ``start``, stop at the time given with ``stop`` and have
+steps with the size given with ``step``. For typical simulations of subcellular
+processes, 10 ms is often a reasonable time step. Longer time steps make the
+simulation run faster and shorter time steps produce more accurate results.
 
 .. tip:: Choosing time step
 
@@ -246,15 +245,20 @@ Graphical output
 
 Graphical output can be displayed with several levels of quality. At the bottom
 end is no output at all, achieved with the argument ``"none"`` to the
-:py:meth:`.smoldyn.Simulation.setGraphics` function. Improving the graphics
+:py:meth:`.smoldyn.Simulation.setGraphics` method. Improving the graphics
 quality slows simulations down, so a good approach is to use the plain
-``opengl`` for model development, no graphics when generating simulation
-results, and ``opengl_better`` when preparing publication figures.
+``"opengl"`` for model development, no graphics when generating simulation
+results, and ``"opengl_better"`` when preparing publication figures.
 
 As used here, the ``frame_thickness=0`` argument tells Smoldyn to not show a
 frame around the entire simulation volume. There are also other statements for
 controlling the background color, the frame display, etc. To set graphical
 output, you need to create an object of :py:class:`.smoldyn.Simulation`  first.
+
+.. todo::
+
+   The user API should translate units by itself when different graphic's
+   method is used.
 
 
 Molecules
@@ -308,7 +312,7 @@ with this surface using the function :py:meth:`.smoldyn.Surface.addAction` or
 :py:meth:`.smoldyn.Surface.addRate` statements. In this case, the statement
 ``surface.both.addAction([S, E, P, ES], "reflect")`` states that molecules of
 all species should reflect off of this surface upon collision with either of
-the two faces.  Other action options are ``absorb`` and ``transmit``, for
+the two faces.  Other action options are ``"absorb"`` and ``"transmit"``, for
 absorption by the surface, and transmission through the surface, respectively.
 Use the :py:meth`.smoldyn.Surface.addRate` statement, which is not used in
 this file, for adsorption, desorption, or partial transmission through a
@@ -325,14 +329,14 @@ the panel edges (typically the best choice), the entire panel face, or other
 options.
 
 Surface panels definitions list each panel within the surface, including
-details about the panel location, orientation, and display. The sequence
-of these parameters is hard to remember but is described in the
-reference section of this manual. In this particular case, the statement
-``panel sphere 0 0 1 50`` indicates that there should be a single
-spherical panel (actually a circle because this is a 2D simulation) with
-its center at the coordinates (0,0). This circle should have radius of 1
-and get drawn with 50 straight line segments. The front face of this
-circle is on the outside and the back face is on the inside (this can be
+details about the panel location, orientation, and display. The sequence of
+these parameters is hard to remember but is described in the reference section
+of this manual. In this particular case, the statement
+``smoldyn.Sphere(center=[0,0], radius=1, slices=50)``  indicates that there
+should be a single spherical panel (actually a circle because this is a 2D
+simulation) with its center at the coordinates (0,0). This circle should have
+radius of 1 and get drawn with 50 straight line segments. The front face of
+this circle is on the outside and the back face is on the inside (this can be
 reversed by giving the radius with a negative value).
 
 Compartments
@@ -344,23 +348,22 @@ placing and observing molecules. Their only simulation role is that
 reactions can be qualified so that they only occur within specific
 compartments (which does not happen in this input file).
 
-As with surfaces, compartments are defined with blocks of text. Each
-block starts with ``start_compartment`` and the compartment name and
-ends with ``end_compartment``. Within the block, list the surface or
-surfaces that form the boundaries to this compartment. Also, list at
-least one ``interior-defining point`` (a set of coordinates) that is
-inside the compartment, so Smoldyn knows which region is the inside and
-which is the outside. In this file, the circle is the compartment
-bounding surface and a point at the center of the circle is the
-interior-defining point, so the compartment represents the entire region
-within the circle.
+As with surfaces, compartments are defined by instantiating
+:py:class:`.smoldyn.Compartment` object which takes the name and a surface or
+surfaces that form the boundaries to this compartment. Also, list at least one
+interior-defining point (a set of coordinates) that is inside the compartment,
+so Smoldyn knows which region is the inside and which is the outside. In this
+file, the circle is the compartment bounding surface and a point at the center
+of the circle is the interior-defining point, so the compartment represents the
+entire region within the circle (``inside = sm.Compartment(name="inside",
+surface=membrane, point=[0, 0])``).
 
 Intuitively, the region of a compartment should be defined as everywhere
 in space to which one can “walk” from the interior-defining point,
 without crossing any of the bounding surfaces. However, for
 computational efficiency, Smoldyn uses a slightly different definition.
 In Smoldyn, the region of a compartment is everywhere in space from
-which one can ``see`` the interior-defining point using a straight line,
+which one can *see* the interior-defining point using a straight line,
 without crossing any of the bounding surfaces. The difference between
 the definitions is minimal is many cases, but can be important.
 

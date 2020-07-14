@@ -51,6 +51,8 @@ latex_engine = "xelatex"
 imgmath_latex = 'xelatex'
 #imgmath_image_format = 'svg'
 
+todo_include_todos = True
+
 autosectionlabel_prefix_document = True
 autosectionlabel_maxdepth = 2
 

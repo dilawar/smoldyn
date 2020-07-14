@@ -1162,7 +1162,7 @@ class Command(object):
 
 
 class Simulation(object):
-    def __init__(self, stop: float, step: float, quitAtEnd: bool = False, **kwargs):
+    def __init__(self, stop: float, step: float, quit_at_end: bool = False, **kwargs):
         """
         Class to store simulation related attributes. 
 
@@ -1172,7 +1172,7 @@ class Simulation(object):
             Simulation stop time (sec)
         step : float
             Simulation step or dt (sec)
-        quitAtEnd : bool
+        quit_at_end : bool
             If `True`, Smoldyn won't prompt user at the end of simulation and
             quit. Same effect can also be achieved by setting environment variable 
             `SMOLDYN_NON_INTERACTIVE` to 1.
@@ -1198,7 +1198,7 @@ class Simulation(object):
             self.setOutputFiles(self.kwargs["output_files"])
 
         # TODO : Add to documentation.
-        self.quitAtEnd = quitAtEnd
+        self.quitAtEnd = quit_at_end
         if os.getenv("SMOLDYN_NON_INTERACTIVE", ""):
             self.quitAtEnd = True
 

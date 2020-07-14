@@ -25,7 +25,7 @@ K_FWD = 0.001  # substrate-enzyme association reaction rate
 K_BACK = 1  # complex dissociation reaction rate
 K_PROD = 1  # complex reaction rate to product
 
-# System space and time definitions. It is a 2D system bound between x=-1 to
+# System space definitions. It is a 2D system bound between x=-1 to
 # x=1 and y=-1 to y=1.
 sm.setBounds(low=[-1, -1], high=[1, 1])
 
