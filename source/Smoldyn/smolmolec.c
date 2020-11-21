@@ -3086,7 +3086,8 @@ int diffuse(simptr sim) {
 	dt=sim->dt;
 	flt1=sqrt(2.0*dt);
 
-	for(ll=0;ll<mols->nlist;ll++)
+#pragma omp parallel for
+	for(ll=0;ll<mols->nlist;ll++) {
 		if(mols->diffuselist[ll]) {
 			mlist=mols->live[ll];
 			nmol=mols->nl[ll];
@@ -3118,6 +3119,7 @@ int diffuse(simptr sim) {
 					else
 						mptr->pos[0]=mptr->posx[0]; }}									// 1D surface-bound molecules aren't allowed to move
 			sim->mols->touch++; }
+        }
 
 	return 0; }
 

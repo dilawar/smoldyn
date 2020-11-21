@@ -5,10 +5,9 @@
 # Please report bugs and problems to support@smoldyn.org. 
 
 ########## Basic setup ##########
+cmake_minimum_required(VERSION 3.9)   # due to openmp
+project(smoldyn LANGUAGES CXX C)
 
-project(smoldyn)
-
-cmake_minimum_required(VERSION 3.4)   # due to pybind11 
 if(POLICY CMP0042)
     cmake_policy(SET CMP0042 NEW)
 endif()
@@ -47,6 +46,7 @@ option(OPTION_USE_ZLIB "Build with Zlib support" OFF)
 option(OPTION_PYTHON  "Build Python module" ON)
 option(OPTION_EXAMPLES "Run Libsmoldyn tests" OFF)
 option(OPTION_STRICT_BUILD "Treat most warnings as error and enable ASAN" OFF)
+option(OPTION_OPENMP "Enable openmp" ON)
 
 if (OPTION_VCELL)
     set(OPTION_USE_LIBTIFF OFF)
@@ -66,6 +66,10 @@ if (OPTION_PYTHON)
         message(STATUS "Compiling for Libsmoldyn: ${OPTION_TARGET_LIBSMOLDYN}")
     endif ()
 endif ()
+
+if(OPTION_OPENMP)
+    find_package(OpenMP REQUIRED)
+endif()
 
 message(STATUS "Option to compile Smoldyn for VCell: ${OPTION_VCELL}")
 message(STATUS "Option to cross-compile for Windows using MinGW: ${OPTION_MINGW}")
@@ -518,14 +522,21 @@ if (OPTION_TARGET_LIBSMOLDYN)
     add_library(smoldyn_shared SHARED ${SRC_FILES} ${HEADER_FILES})
     add_library(smoldyn_static STATIC ${SRC_FILES} ${HEADER_FILES})
     set_property(TARGET smoldyn_static PROPERTY POSITION_INDEPENDENT_CODE ON)
-    target_link_libraries(smoldyn_shared ${DEP_LIBS})
-    target_link_libraries(smoldyn_static ${DEP_LIBS})
+    target_link_libraries(smoldyn_shared PRIVATE ${DEP_LIBS})
+    target_link_libraries(smoldyn_static PRIVATE ${DEP_LIBS})
     if (APPLE_BUILD)
         set_target_properties(smoldyn_shared PROPERTIES LINK_FLAGS "-framework Glut -framework OpenGL")
     elseif (WINDOWS_BUILD)
         set_target_properties(smoldyn_shared PROPERTIES PREFIX "lib")
         set_target_properties(smoldyn_static PROPERTIES PREFIX "lib")
     endif ()
+
+    # enable openmp
+    if(OPTION_OPENMP)
+        target_link_libraries(smoldyn_shared PRIVATE OpenMP::OpenMP_CXX)
+        target_link_libraries(smoldyn_static PRIVATE OpenMP::OpenMP_CXX)
+    endif()
+
 endif ()
 
 

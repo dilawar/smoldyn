@@ -18,7 +18,7 @@ color B green
 color C blue
 
 time_start 0
-time_stop 2000
+time_stop 200
 time_step 0.01
 
 mol 200 A 10 50
