@@ -539,6 +539,7 @@ if (OPTION_TARGET_LIBSMOLDYN)
 
     # enable openmp
     if(OPTION_OPENMP)
+        add_definitions(-DOPTION_OPENMP)
         target_link_libraries(smoldyn_shared PRIVATE OpenMP::OpenMP_CXX)
         target_link_libraries(smoldyn_static PRIVATE OpenMP::OpenMP_CXX)
     endif()
