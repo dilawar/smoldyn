@@ -1420,7 +1420,7 @@ int rxnsetproduct(simptr sim,int order,int r,char *erstr) {
 	er=0;
 	dim=sim->dim;
 
-	if(nprod==0) {																		// nprod==0
+    if(nprod==0) {  // nprod==0
 		if(rparamt==RPnone || rparamt==RPirrev || rparamt==RPconfspread)
 			rxn->unbindrad=0;
 		else {
@@ -1435,7 +1435,7 @@ int rxnsetproduct(simptr sim,int order,int r,char *erstr) {
 			for(d=0;d<dim;d++) dist+=rxn->prdpos[0][d]-rxn->prdpos[1][d];
 		rxn->unbindrad=sqrt(dist); }
 
-	else if(nprod==1) {																// nprod==1, all others (i.e. not offset or fixed)
+	else if(nprod==1) {    // nprod==1, all others (i.e. not offset or fixed)
 		if(rparamt==RPnone || rparamt==RPirrev || rparamt==RPconfspread) {
 			rxn->unbindrad=0;						// only 1 product so no unbinding radius
 			for(d=0;d<dim;d++) rxn->prdpos[0][d]=0; }
@@ -2488,7 +2488,7 @@ int rxnparsereaction(simptr sim,const char *word,char *line2,char *errstr) {
 	while(more) {			// product list
 		CHECKS((itct=sscanf(line2,"%s %s",nm,nm1))>=1,"failed to read product");
 		if(strcmp(nm,"0")) {
-			CHECKS(nprod+1<MAXPRODUCT,"exceeded allowed number of reaction products");
+			CHECKS(size_t(nprod+1)<MAXPRODUCT,"exceeded allowed number of reaction products");
 			er=molstring2pattern(nm,&ms,pattern,2);
 			CHECKS(er!=-1,"BUG: reading reaction");
 			CHECKS(er!=-2,"mismatched or improper parentheses around reactant state");
@@ -2621,7 +2621,7 @@ failure:
 
 /* doreact */
 int doreact(simptr sim,rxnptr rxn,moleculeptr mptr1,moleculeptr mptr2,int ll1,int m1,int ll2,int m2,double *pos,panelptr rxnpnl) {
-	int order,prd,d,nprod,dim,calc,dorxnlog,prd2;
+	int order,prd,d,nprod,dim,calc,dorxnlog,prd2,er;
 	long int pserno;
 	unsigned long long sernolist[MAXPRODUCT];
 	double dc1,dc2,x,dist,pvalue;
@@ -2828,9 +2828,9 @@ int doreact(simptr sim,rxnptr rxn,moleculeptr mptr1,moleculeptr mptr2,int ll1,in
 			if(dorxnlog==0 && (ListMemberLI(rxn->logserno,mptr->serno&0xFFFFFFFF) || (mptr->serno>0xFFFFFFF && ListMemberLI(rxn->logserno,mptr->serno>>32))))
 				dorxnlog=1;
 			if(dorxnlog==1) {
-				fptr=scmdgetfptr(sim->cmds,rxn->logfile);
-				if(!fptr) {
-					simLog(sim,8,"cannot write to reaction log filename '%s'\n",rxn->logfile);
+				er=scmdgetfptr(sim->cmds,rxn->logfile,1,&fptr,NULL);
+				if(er==-1) {
+					simLog(sim,8,"reaction log filename '%s' is undeclared\n",rxn->logfile);
 					dorxnlog=-1; }
 				else {
 					scmdfprintf(sim->cmds,fptr,"%g %s",sim->time,rxn->rname);

@@ -1,14 +1,15 @@
 #!/bin/bash
 
-# For homebrew.
-
 set -e 
+set -x
 
 brew install libtiff || echo "Failed to install libtiff"
 brew install cmake || echo "Failed to install cmake"
 brew install freeglut || echo "Failed to install freeglut"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+export PATH=/usr/local/bin:$PATH
 
 SMOLDYN_VERSION=$(bash $SCRIPT_DIR/get_version.sh)
 
@@ -17,11 +18,11 @@ rm -rf $WHEELHOUSE && mkdir -p $WHEELHOUSE
 
 
 # Always prefer brew version.
-PYTHON=/usr/local/bin/python3
+PYTHON=$(which python3)
 
 if [ ! -f $PYTHON ]; then
     echo "Not found $PYTHON"
-    continue
+    exit -1
 fi
 
 $PYTHON -m pip install setuptools --upgrade 
@@ -38,27 +39,32 @@ PLATFORM=$($PYTHON -c "import distutils.util; print(distutils.util.get_platform(
     echo "Building wheel for $PLATFORM"
     ls -ltr
     cmake ../.. \
-        -DSMOLDYN_VERSION:STRING=${SMOLDYN_VERSION} \
         -DOPTION_PYTHON=ON \
-        -DPYTHON_EXECUTABLE=$PYTHON
-
-    make -j$(nproc) && make wheel
-
+        -DOPTION_EXAMPLES=ON \
+        -DSMOLDYN_VERSION:STRING=${SMOLDYN_VERSION} \
+        -DPython3_EXECUTABLE=$PYTHON
+    make -j4 
+    make wheel
+    ctest --output-on-failure
     /usr/local/bin/delocate-wheel -w $WHEELHOUSE -v *.whl
+    ls $WHEELHOUSE/smoldyn*.whl
 
-    ls -ltR $WHEELHOUSE/smoldyn*.whl
+    ## NOTE: I am contantly getting  the following error in venv.
+    ## $ python -c 'import smoldyn; print(smoldyn.__version__ )'
+    ## Fatal Python error: PyMUTEX_LOCK(gil->mutex) failed
 
-    # create a virtualenv and test this.
-    VENV=/tmp/venv
-    rm -rf $VENV
+    ## create a virtualenv and test this.
+    ##VENV=$(pwd)/venv
+    ##rm -rf $VENV
     (
-        $PYTHON -m venv $VENV
-        source $VENV/bin/activate
-        python --version
-        python -m pip install $WHEELHOUSE/smoldyn*.whl
-        python -c 'import smoldyn; print(smoldyn.__version__ )'
-        python -m smoldyn $SCRIPT_DIR/../examples/S4_molecules/mollist.txt
-        deactivate
+        # $PYTHON -m venv $VENV
+        # source $VENV/bin/activate
+        # which python
+        # now use venv pyhton.
+        $PYTHON --version
+        $PYTHON -m pip install $WHEELHOUSE/smoldyn*.whl
+        $PYTHON -c 'import smoldyn; print(smoldyn.__version__ )'
+        $PYTHON -m pip uninstall -y smoldyn
     )
 )
 
