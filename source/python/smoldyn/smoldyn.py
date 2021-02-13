@@ -34,7 +34,7 @@ import math
 from pathlib import Path
 from dataclasses import dataclass
 
-from typing import Union, Tuple, List, Dict, Optional, Sequence
+from typing import Union, Tuple, List, Dict, Optional, Sequence, Callable
 
 import logging
 
@@ -2367,24 +2367,31 @@ class Simulation(_smoldyn.Simulation):
         y: List[List[float]] = super().getOutputData(dataname, erase)
         return y
 
-    def connect(self, func, target, step: int, args: List[float] = []):
-        """Connect a arbitrary Python function to Simulation. The function will
-        be called at every 'step'
+    def connect(
+        self,
+        src_func: Callable,
+        tgt_func: Callable,
+        step: int,
+        args: List[float] = [],
+    ):
+        """Connect output of a python function ``source_func`` to the input of
+        another Python function ``tgt_func``. This connection is called every 'step'
+        during the simulation.
 
         Parameters
         ----------
-        func :
-            Python function to connect. It must have two arguments. The first
-            argument is always simulation time 't'. the second argument is a
-            list of float which refers to `args` (4th argument of this function)
-        target :
-            Target function or a property. The return value of the connected function
-            i.e., func is the argument to this function.
+        src_func :
+            Python function which is computed during callback. It have two
+            arguments: the first argument is always simulation time 't' and the
+            second argument is a list of floats (see `args`).
+        tgt_func : A callback function or a Python property. 
+            The return value of the src_func is passed as the first argument to
+            this function.
         step : int
             The connected function func is called after these many simulation
             steps.
         args : List[float]
-            argument of func (passed by reference). Any change in this list will
+            Second argument to src_func (passed by reference). Any change in this list will
             be visible to func.
 
         Example
@@ -2419,7 +2426,7 @@ class Simulation(_smoldyn.Simulation):
          (81.0, 1.9510546532543747),
          (91.0, 0.37011200572554614)]
         """
-        return super().connect(func, target, step, args)
+        return super().connect(src_func, tgt_func, step, args)
 
     def addPath2D(self, *points, closed: bool = False):
         return Path2D(*points, simulation=super(), closed=closed)

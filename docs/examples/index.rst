@@ -5,9 +5,50 @@ Examples
 Using ``smoldyn.connect``
 ---------------------------
 
-The Python module add a few new capabilities to Smoldyn. Smoldyn can now call
-any arbitrary function ``foo`` during the simulation and can use the return
-value of ``foo`` to update one of the it's object. 
+The Python module makes to possible to do a few new things which were not
+possible before.  Smoldyn can now call any arbitrary Python function ``foo`` at
+every nth time-step during a simulation and can use the return value of ``foo``
+to update its state.
+
+Here is a simple example.
+
+.. code-block:: python
+
+    import math
+    s = smoldyn.Simulation(low=(0, 0), high=(10, 10))
+    a = s.addSpecies("a", color="black", difc=0.1)
+    avals = []
+
+    def foo(t, args):
+        global a, avals
+        x, y = args
+        avals.append((t, a.difc["soln"])) # storing value 
+        return x * math.sin(t) + y        # real computation
+
+    def bar(val):
+        global a
+        a.difc = val  # val is computed by foo
+
+    s.connect(foo, bar, step=10, args=[1, 1])
+    s.run(100, dt=1)
+
+
+.. code-block:: python
+
+   >>> print(avals)
+    [(1.0, 0.1),
+     (11.0, 1.8414709848078965),
+     (21.0, 9.793449296524592e-06),
+     (31.0, 1.836655638536056),
+     (41.0, 0.595962354676935),
+     (51.0, 0.841377331195291),
+     (61.0, 1.6702291758433747),
+     (71.0, 0.03388222999160706),
+     (81.0, 1.9510546532543747),
+     (91.0, 0.37011200572554614)]
+
+
+A slightly more complicated example.
 
 In the example below, Smoldyn is calling the function ``generate_spike`` and
 uses its value to update the rate of the reaction using a callback function
@@ -90,51 +131,4 @@ uses its value to update the rate of the reaction using a callback function
     print("Done")
 
 
-Examples
---------
-
-.. literalinclude:: ../../examples/S15_python/2Dreact.py
-
-
-
-.. liternalinlude:: ../../examples/S15_python/2Dreact.py
-
-
-.. liternalinlude:: ../../examples/S15_python/bistable.py
-
-
-.. liternalinlude:: ../../examples/S15_python/bounce3.py
-
-
-.. liternalinlude:: ../../examples/S15_python/bounds1.py
-
-
-.. liternalinlude:: ../../examples/S15_python/bounds2.py
-
-
-.. liternalinlude:: ../../examples/S15_python/box.py
-
-
-.. liternalinlude:: ../../examples/S15_python/change_env.py
-
-
-.. liternalinlude:: ../../examples/S15_python/cluster.py
-
-
-.. liternalinlude:: ../../examples/S15_python/cmddata.py
-
-
-.. liternalinlude:: ../../examples/S15_python/integrate_with_moose.py
-
-
-.. liternalinlude:: ../../examples/S15_python/intersurface.py
-
-
-.. liternalinlude:: ../../examples/S15_python/lotvolt.py
-
-
-.. liternalinlude:: ../../examples/S15_python/port.py
-
-
-.. liternalinlude:: ../../examples/S15_python/template.py
 
