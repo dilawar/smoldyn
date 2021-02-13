@@ -302,7 +302,7 @@ class Panel(object):
         *,
         name: str = "",
         shape: _smoldyn.PanelShape = _smoldyn.PanelShape.none,
-        neighbors: List['Panel'] = [],
+        neighbors: List["Panel"] = [],
         simulation: Optional[_smoldyn.Simulation] = None,
     ):
         """Panels are components of a surface. One or more Panels are requried
@@ -327,7 +327,7 @@ class Panel(object):
         self.surface: Surface = NullSurface()
         self.neighbors = neighbors
 
-    def _setSimulation(self, simulation : _smoldyn.Simulation):
+    def _setSimulation(self, simulation: _smoldyn.Simulation):
         assert simulation
         self.simulation = simulation
         self.front.simulation = simulation
@@ -463,7 +463,9 @@ class Rectangle(Panel):
         name : optional
             name of the panel.
         """
-        super().__init__(simulation=simulation, shape=_smoldyn.PanelShape.rect, name=name)
+        super().__init__(
+            simulation=simulation, shape=_smoldyn.PanelShape.rect, name=name
+        )
         self.corner = corner
         self.dimensions = dimensions
         assert axis[0] in "+-", "axis must precede by '+' or '-'"
@@ -574,7 +576,9 @@ class Hemisphere(Panel):
         name : optional
             name
         """
-        super().__init__(simulation=simulation, shape=_smoldyn.PanelShape.hemi, name=name)
+        super().__init__(
+            simulation=simulation, shape=_smoldyn.PanelShape.hemi, name=name
+        )
         self.center = center
         self.radius = radius
         self.vector = vector
@@ -615,7 +619,9 @@ class Cylinder(Panel):
         name : optional
             name
         """
-        super().__init__(simulation=simulation, shape=_smoldyn.PanelShape.cyl, name=name)
+        super().__init__(
+            simulation=simulation, shape=_smoldyn.PanelShape.cyl, name=name
+        )
         self.start: List[float] = start
         self.end: List[float] = end
         self.radius: float = radius
@@ -650,7 +656,9 @@ class Disk(Panel):
         name : optional
             name
         """
-        super().__init__(simulation=simulation, shape=_smoldyn.PanelShape.disk, name=name)
+        super().__init__(
+            simulation=simulation, shape=_smoldyn.PanelShape.disk, name=name
+        )
         self.center = center
         self.radius = radius
         self.vector = vector
@@ -873,7 +881,10 @@ class Path2D(object):
                     )
                 length = x2 - x1 if y2 == y1 else y2 - y1
                 p = Rectangle(
-                    simulation=self.simulation, corner=(x1, y1), dimensions=[length], axis=axis
+                    simulation=self.simulation,
+                    corner=(x1, y1),
+                    dimensions=[length],
+                    axis=axis,
                 )
                 __logger__.info(f"Added a Rectangle {p}")
                 self.panels.append(p)
@@ -1353,16 +1364,16 @@ class Reaction(object):
 
     def __init__(
         self,
+        *,
         simulation: _smoldyn.Simulation,
         name: str,
         subs: List[SpeciesWithState],
         prds: List[SpeciesWithState],
-        *,
         rate: float = 0.0,
+        binding_radius: float = -1.0,
+        reaction_probability: float = -1.0,
         compartment: Compartment = None,
         surface: Surface = None,
-        binding_radius: float = 0.0,
-        reaction_probability: float = 0.0,
     ):
         """Reaction (only occurs in forwared direction).
 
@@ -1378,23 +1389,33 @@ class Reaction(object):
             List of products.
         rate : float
             rate of the reaction
+        binding_radius: float
+            binding radius (for second order reactions, if rate is not given)
+        reaction_probability: float
+            reaction probability (for first order reactions, if rate if not
+            given)
         compartment: Compartment
             If not ``None``, restrict the reaction to this compartment.
         surface: Surface
             If not ``None``, restricts this reaction to this surface.
-        binding_radius: float
-            binding radius (for second order reactions, if kf is not given)
-        reaction_probability: float
-            reaction probability (for first order reactions, if kf if not
-            given)
+
+
+        Note
+        ----
+
+        ``rate``, ``reaction_probability``/``binding_radius`` are mutually
+        exclusive. Non-negative rate take prececende over reaction_probability
+        and binding_radius. Note that binding_radius makes sense for
+        bimolecular reactions only.
+
         """
         self.simulation = simulation
         self.name = "r%d" % id(self) if not name else name
-        self.__rate = 0.0
         self.subs = subs
         self.prds = prds
-        self.reaction_probability = reaction_probability
-        self.binding_radius = binding_radius
+        self.__rate = rate
+        self.__reaction_probability = reaction_probability
+        self.__binding_radius = binding_radius
         self.compartment = compartment
         self.surface = surface
 
@@ -1427,6 +1448,13 @@ class Reaction(object):
                 prdNames.append(x[0].name)
                 prdStates.append(_toMS(x[1]))
 
+        #
+        # Checks
+        #
+        assert (
+            rate > 0 or binding_radius > 0 or reaction_probability > 0
+        ), "Must have rate > 0 or binding_radius > 0 or reaction_probability > 0"
+
         k = self.simulation.addReaction(
             name,
             r1name,
@@ -1442,7 +1470,11 @@ class Reaction(object):
             __logger__.warning(f" Products: {prds}, {prdNames}/{prdStates}")
             raise RuntimeError(f"Failed to add reaction, ErrorCode {k}")
 
-        self.setRate(rate, reaction_probability, binding_radius)
+        self._setRateProbOrRadii(
+            rate=rate,
+            reaction_probability=reaction_probability,
+            binding_radius=binding_radius,
+        )
         if self.compartment is not None or self.surface is not None:
             cname = self.compartment.name if self.compartment else ""
             sname = self.surface.name if self.surface else ""
@@ -1457,34 +1489,70 @@ class Reaction(object):
     @rate.setter
     def rate(self, rate: float):
         if rate != self.__rate:
-            self.__rate = rate
-            self.setRate(rate)
+            self._setRateProbOrRadii(
+                rate=rate, reaction_probability=-1.0, binding_radius=-1.0
+            )
 
-    def setRate(self, rate, reaction_probability=0.0, binding_radius=0.0):
+    @property
+    def reaction_probability(self) -> float:
+        return self.__reaction_probability
+
+    @reaction_probability.setter
+    def reaction_probability(self, prob: float):
+        if prob != self.__reaction_probability:
+            self._setRateProbOrRadii(
+                rate=-1.0, reaction_probability=prob, binding_radius=-1.0
+            )
+
+    @property
+    def binding_radius(self) -> float:
+        return self.__binding_radius
+
+    @binding_radius.setter
+    def binding_radius(self, radius: float):
+        if radius != self.__binding_radius:
+            self._setRateProbOrRadii(
+                rate=-1.0, reaction_probability=-1.0, binding_radius=radius
+            )
+
+    def _setRateProbOrRadii(
+        self,
+        *,
+        rate: float,
+        reaction_probability: float,
+        binding_radius: float,
+    ):
         # if rate is negative, then we expect either binding_radius or
-        # reaction_probability. A reaction can have zero rate.
+        # reaction_probability. A reaction can have zero rate in the begining
+        # and a function can update it later.
         if rate >= 0.0:
+            self.__rate = rate
             k = self.simulation.setReactionRate(self.name, rate, False)
             assert k == _smoldyn.ErrorCode.ok
             return
-        elif rate < 0.0:
-            # check if reaction_probability is given
-            if len(self.subs) < 2:
-                assert (
-                    reaction_probability > 0.0
-                ), "Must set rate or reaction_probability"
-                k = self.simulation.setReactionRate(
-                    self.name, reaction_probability, True
-                )
-                assert k == _smoldyn.ErrorCode.ok
-            else:
-                assert binding_radius > 0.0, "Must set either rate of binding_radius"
-                k = self.simulation.setReactionRate(self.name, binding_radius, True)
-                assert k == _smoldyn.ErrorCode.ok
-        else:
-            raise RuntimeError(
-                "Rate is negative and reaction_probability or reaction_probability set to zero?"
-            )
+
+        # NOTE: if order of reaction is 1 then setReactionRate set reaction
+        # probability else it sets binding radius. The C API checks and
+        # raises an approprite error message. Here the logic may seem bit
+        # redundant and wrong since we are calling the same function
+        # without any change in the arguments to set both reaciton
+        # probability and binding radius. We may change this in the future.
+        if reaction_probability >= 0.0:
+            assert (
+                len(self.subs) == 1
+            ), "reaction_probability only make sense of 1st oder reactions."
+            self.__reaction_probability = reaction_probability
+            k = self.simulation.setReactionRate(self.name, reaction_probability, True)
+            assert k == _smoldyn.ErrorCode.ok
+            return
+
+        assert binding_radius >= 0.0
+        assert (
+            len(self.subs) > 1
+        ), "binding radius makes sense for reaction with order >= 2"
+        print(f"setting binding radius {binding_radius=}")
+        k = self.simulation.setReactionRate(self.name, binding_radius, True)
+        assert k == _smoldyn.ErrorCode.ok
 
     @property
     def order(self):
@@ -1621,10 +1689,10 @@ class BidirectionalReaction(object):
         self._kf = kf
         self._kb = kb
         self.forward = Reaction(
-            self.simulation,
-            fwdname,
-            subs,
-            prds,
+            simulation=self.simulation,
+            name=fwdname,
+            subs=subs,
+            prds=prds,
             rate=kf,
             compartment=compartment,
             surface=surface,
@@ -1635,10 +1703,10 @@ class BidirectionalReaction(object):
         self.reverse = None
         if self._kb > 0.0:
             self.reverse = Reaction(
-                self.simulation,
-                revname,
-                prds,
-                subs,
+                simulation=self.simulation,
+                name=revname,
+                subs=prds,
+                prds=subs,
                 rate=self._kb,
                 compartment=compartment,
                 surface=surface,
@@ -1650,7 +1718,9 @@ class BidirectionalReaction(object):
 
     @kf.setter
     def kf(self, val: float):
-        self.forward.setRate(val)
+        self.forward._setRateProbOrRadii(
+            rate=val, reaction_probability=-1.0, binding_radius=-1.0
+        )
 
     @property
     def kb(self):
@@ -1659,7 +1729,9 @@ class BidirectionalReaction(object):
     @kb.setter
     def kb(self, val: float):
         assert self.reverse
-        self.reverse.setRate(val)
+        self.reverse._setRateProbOrRadii(
+            rate=val, reaction_probability=-1.0, binding_radius=-1.0
+        )
 
 
 @dataclass
@@ -2208,22 +2280,22 @@ class Simulation(_smoldyn.Simulation):
         subs: List[SpeciesWithState],
         prds: List[SpeciesWithState],
         *,
-        rate: float = 0.0,
+        rate: float = -1.0,
         compartment: Compartment = None,
         surface: Surface = None,
-        binding_radius: float = 0.0,
-        reaction_probability: float = 0.0,
+        binding_radius: float = -1.0,
+        reaction_probability: float = -1.0,
     ) -> Reaction:
         """Add a reaction (unidirectional)
 
-        See Reaction for details.
-
+        See :py:class::Reaction for details.
         """
+
         return Reaction(
-            super(),
-            name,
-            subs,
-            prds,
+            simulation=super(),
+            name=name,
+            subs=subs,
+            prds=prds,
             rate=rate,
             compartment=compartment,
             surface=surface,
@@ -2292,7 +2364,7 @@ class Simulation(_smoldyn.Simulation):
             A matrix of float.
         """
         assert " " not in dataname, f"Must not contain spaces: '{dataname}'"
-        y : List[List[float]] = super().getOutputData(dataname, erase)
+        y: List[List[float]] = super().getOutputData(dataname, erase)
         return y
 
     def connect(self, func, target, step: int, args: List[float] = []):
